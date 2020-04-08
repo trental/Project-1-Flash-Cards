@@ -1,0 +1,36 @@
+body {
+	background: hsla(146, 62%, 95%, 1);
+	font-family: 'Lucida Console', Monaco, monospace;
+	font-size: 1.5rem;
+	text-align: center;
+	margin: 0;
+	padding: 0;
+	height: 100vh;
+	width: 100vw;
+	box-sizing: border-box;
+	display: grid;
+	grid-template-rows: 100px 400px 1fr;
+}
+
+body * {
+	background: lightgrey;
+	border: 1px solid lightslategrey;
+}
+
+.minimize {
+	grid-template-rows: 100px 40px 1fr;
+}
+
+@media (min-width: 600px) {
+	body {
+		grid-template-columns: 1fr 5fr;
+		grid-template-rows: 100px 1fr 0;
+	}
+	.header {
+		grid-column: 1 / span 2;
+	}
+	.minimize {
+		grid-template-columns: 40px 5fr;
+		grid-template-rows: 100px 1fr 0;
+	}
+}
