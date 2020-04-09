@@ -118,72 +118,35 @@ cardViewer.presentSummary = function (deck) {
 };
 
 cardViewer.addSummary = function (deck) {
-	let newSummary = document.createElement('div');
-	newSummary.classList.add('deckSummary');
-	newSummary.classList.add('hidden');
+	let summaryTemplate = document.querySelector('#summaryTemplate');
+	let newSummary = summaryTemplate.cloneNode(true); // clone the template, add id and event listeners
+
 	newSummary.id = 'summary' + deck.dataset.id;
 
-	let newDeckName = document.createElement('h1');
-	newDeckName.innerText = deck.innerText;
-	newSummary.appendChild(newDeckName);
-
-	let newScoringSummary = document.createElement('h4');
-	newScoringSummary.innerText = 'Scoring Summary';
-	let newScore1 = document.createElement('div');
-	newScore1.dataset.id = 'count1';
-	newScore1.innerText = '1:';
-	let newScore2 = document.createElement('div');
-	newScore2.dataset.id = 'count2';
-	newScore2.innerText = '2:';
-	let newScore3 = document.createElement('div');
-	newScore3.dataset.id = 'count3';
-	newScore3.innerText = '3:';
-	let newScore4 = document.createElement('div');
-	newScore4.dataset.id = 'count4';
-	newScore4.innerText = '4:';
-	let newScore5 = document.createElement('div');
-	newScore5.dataset.id = 'count5';
-	newScore5.innerText = '5:';
-	let newTotal = document.createElement('div');
-	newTotal.dataset.id = 'countTotal';
-	newTotal.innerText = 'Total:';
-	newSummary.appendChild(newScoringSummary);
-	newSummary.appendChild(newScore1);
-	newSummary.appendChild(newScore2);
-	newSummary.appendChild(newScore3);
-	newSummary.appendChild(newScore4);
-	newSummary.appendChild(newScore5);
-	newSummary.appendChild(newTotal);
+	newSummary.querySelector('h1').innerText = deck.innerText;
 
 	newSummary.refreshStats = function () {
-		let count1 = deck.cardsWithScore(1).length;
-		let count2 = deck.cardsWithScore(2).length;
-		let count3 = deck.cardsWithScore(3).length;
-		let count4 = deck.cardsWithScore(4).length;
-		let count5 = deck.cardsWithScore(5).length;
-		let countTotal = count1 + count2 + count3 + count4 + count5;
+		let count = [];
+		let countTotal = 0;
+		for (let i = 1; i <= 5; i++) {
+			let currentCount = deck.cardsWithScore(i).length;
+			count.push(currentCount);
+			countTotal += currentCount;
+		}
 
-		newScore1.innerText = '1: ' + count1;
-		newScore2.innerText = '2: ' + count2;
-		newScore3.innerText = '3: ' + count3;
-		newScore4.innerText = '4: ' + count4;
-		newScore5.innerText = '5: ' + count5;
-		newTotal.innerText = 'Total: ' + countTotal;
+		let summaryCounts = newSummary.querySelectorAll('.summaryCounts');
+
+		for (let i = 0; i < summaryCounts.length; i++) {
+			summaryCounts[i].innerText = i + 1 + ': ' + count[i];
+		}
+		summaryCounts[summaryCounts.length - 1].innerText = 'Total: ' + countTotal;
 	};
 
-	let newTags = document.createElement('h4');
-	newTags.innerText = 'Tags';
-	let tags = document.createElement('div');
-	tags.dataset.id = 'tags';
-	newSummary.appendChild(newTags);
-	newSummary.appendChild(tags);
+	let newLearnButton = newSummary.querySelector('.learnButton');
 
-	let newLearnButton = document.createElement('a');
-	newLearnButton.innerText = 'Learn this deck';
-	newLearnButton.classList.add('deck');
 	newLearnButton.addEventListener('click', cardViewer.presentCards);
 	newLearnButton.dataset.deckid = deck.dataset.id;
-	newSummary.appendChild(newLearnButton);
+	// newSummary.appendChild(newLearnButton);
 
 	cardViewer.appendChild(newSummary);
 };
@@ -241,7 +204,7 @@ deckViewer.addDeck = function (deckToBeAdded) {
 	// this allows the user to switch back and forth between decks
 
 	let testerTemplate = document.querySelector('#testerTemplate');
-	let newCardTester = testerTemplate.cloneNode(true);
+	let newCardTester = testerTemplate.cloneNode(true); // clone the template, add id and event listeners
 
 	// give matching id to the card tester we are adding
 	newCardTester.id = 'tester' + newId;
