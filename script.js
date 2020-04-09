@@ -1,6 +1,6 @@
 const header = document.querySelector('.header');
 const deckViewer = document.querySelector('.deckViewer');
-const cardviewer = document.querySelector('.cardViewer');
+const cardViewer = document.querySelector('.cardViewer');
 const body = document.querySelector('body');
 
 let firstDeck = [{
@@ -27,21 +27,28 @@ let secondDeck = [{
 	score: 1
 }]
 
-deckViewer.decks = {}
+cardViewer.presentCards = function (deck) {
+	cardTester = cardViewer.querySelector('.cardTester')
+	cardTester.classList.remove("hidden")
+}
 
 deckViewer.handleClick = function (event) {
 	// depending on where you click we will do things
 	const el = event.target
 
-	console.log(el)
-
 	// here the user can
 	
-	// expand or contract menu	
 	
-	body.classList.toggle('minimize');
+
 	
 	// select a deck to view / practice / edit / download
+	if (el.classList.contains("deck")) {
+		console.log(el.cards)
+		cardViewer.presentCards(el)
+	} else {
+	// expand or contract menu	
+		body.classList.toggle('minimize');
+	}
 	
 	// upload / link a deck
 
@@ -53,15 +60,14 @@ deckViewer.addDeck = function (deckToBeAdded) {
 	newDeck.innerText = deckToBeAdded[0].tags[0]
 	newDeck.classList.add("deck")
 
+	newDeck.cards = [];
+
+	deckToBeAdded.forEach((card) => newDeck.cards.push(card));
+
 	this.appendChild(newDeck)
 	
 	// validates structure
-	// adds to the decks object
 	// and displays the deck in the deck menu as an icon
-
-
-
-
 
 }
 

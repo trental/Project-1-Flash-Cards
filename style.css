@@ -23,10 +23,32 @@ body * {
 	border: 1px solid lightslategrey;
 }
 
+.cardTester {
+	background: red;
+	margin: 10px auto;
+	width: 450px;
+	height: 90%;
+}
 
+.testCardFront {
+	background: white;
+	margin: 10px auto;
+	width: 90%;
+	height: 40%;
+}
 
+.testCardBack {
+	background: white;
+	margin: 10px auto;
+	width: 90%;
+	height: 40%;
+}
+
+.hidden {
+	display: none;
+}
 .minimize {
-	grid-template-rows: 100px 40px 1fr;
+	grid-template-rows: 100px 28px 1fr;
 }
 
 @media (min-width: 600px) {
@@ -41,4 +63,5 @@ body * {
 		grid-template-columns: 40px 5fr;
 		grid-template-rows: 100px 1fr 0;
 	}
+
 }
