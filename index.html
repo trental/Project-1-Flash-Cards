@@ -10,6 +10,28 @@
 		<section class="deckViewer">DECKS</section>
 		<section class="cardViewer">
 			VIEWER
+			<div class="cardTester hidden" id="testerTemplate">
+				<div class="testCardFront"></div>
+				<div class="testCardBack"></div>
+				<div class="testResponseContainer">
+					<a class="testResponseButton">1</a><a class="testResponseButton">2</a
+					><a class="testResponseButton">3</a><a class="testResponseButton">4</a
+					><a class="testResponseButton">5</a>
+				</div>
+			</div>
+			<div class="deckSummary hidden" id="summaryTemplate">
+				<h1>Deck Name</h1>
+				<h4>Scoring Summary</h4>
+				<div data-id="count1">1: 0</div>
+				<div data-id="count2">2: 0</div>
+				<div data-id="count3">3: 0</div>
+				<div data-id="count4">4: 0</div>
+				<div data-id="count5">5: 0</div>
+				<div data-id="countTotal">Total: 0</div>
+				<h4>Tags</h4>
+				<div data-id="tags"></div>
+				<a class="deck" data-deckid="0">Learn this deck</a>
+			</div>
 		</section>
 		<div id="modal" class="hidden">
 			<div id="modal-textbox">

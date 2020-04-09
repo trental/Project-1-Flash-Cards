@@ -239,34 +239,16 @@ deckViewer.addDeck = function (deckToBeAdded) {
 
 	// also build a new cardTester element and store it in the cardViewer
 	// this allows the user to switch back and forth between decks
-	let newCardTester = document.createElement('div');
-	newCardTester.classList.add('cardTester');
-	newCardTester.classList.add('hidden');
+
+	let testerTemplate = document.querySelector('#testerTemplate');
+	let newCardTester = testerTemplate.cloneNode(true);
+
 	// give matching id to the card tester we are adding
 	newCardTester.id = 'tester' + newId;
-
-	let newTestCardFront = document.createElement('div');
-	newTestCardFront.classList.add('testCardFront');
-	newCardTester.appendChild(newTestCardFront);
-
-	let newTestCardBack = document.createElement('div');
-	newTestCardBack.classList.add('testCardBack');
-	newCardTester.appendChild(newTestCardBack);
-
-	let newTestResponseContainer = document.createElement('div');
-	newTestResponseContainer.classList.add('testResponseContainer');
-
-	for (let i = 1; i <= 5; i++) {
-		let newTestResponseButton = document.createElement('a');
-		newTestResponseButton.classList.add('testResponseButton');
-		newTestResponseButton.innerText = i;
-		newTestResponseContainer.appendChild(newTestResponseButton);
-	}
 
 	newCardTester.handleClick = function (event) {
 		// depending on where you click we will do things
 		event.preventDefault();
-		console.log(event);
 		const el = event.target;
 
 		// click one of the buttons to grade your card
@@ -275,7 +257,6 @@ deckViewer.addDeck = function (deckToBeAdded) {
 		}
 	};
 
-	newCardTester.appendChild(newTestResponseContainer);
 	newCardTester.addEventListener('click', newCardTester.handleClick);
 	cardViewer.appendChild(newCardTester);
 
