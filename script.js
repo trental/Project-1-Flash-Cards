@@ -57,58 +57,20 @@ let secondDeck = [
 //
 ////////////////////////////////////////////////
 
+cardViewer.hideAllCardTesters = function () {
+	let cardTesters = [...this.querySelectorAll('.cardTester')]; // convert to node list
+
+	cardTesters.forEach((cardTester) => {
+		cardTester.classList.add('hidden');
+	});
+};
+
 cardViewer.presentCards = function (deck) {
-	cardTester = cardViewer.querySelector('.cardTester');
-	displayFront = cardTester.querySelector('.testCardFront');
-	displayBack = cardTester.querySelector('.testCardBack');
+	this.hideAllCardTesters();
+	//let cardTesters = cardViewer.querySelectorAll('.cardTester');
+	let cardTester = cardViewer.querySelector('#tester' + deck.dataset.id);
 	cardTester.classList.remove('hidden');
 
-	let currentCard; // current card shown in tester screen to be scored
-
-	cardTester.showNextCard = function () {
-		// algorithm here to determine which card to show
-		console.table(deck.cards);
-		// if any score 1, show them all first before moving on to 2
-		if (deck.cardsWithScore(1).length > 0) {
-			currentCard = deck.cardsWithScore(1)[0];
-			displayFront.innerHTML = currentCard.front;
-			displayBack.innerHTML = currentCard.back;
-		}
-		// if any score 2, show all before 3s
-		else if (deck.cardsWithScore(2).length > 0) {
-			currentCard = deck.cardsWithScore(2)[0];
-			displayFront.innerHTML = currentCard.front;
-			displayBack.innerHTML = currentCard.back;
-		}
-		// weight scores 3, 4, 5 and five together
-		// default weights are 3 => 3, 4 => 2, 5 => 1, with an option not to show 5s
-	};
-
-	cardTester.scoreCurrentCard = function (chosenScore) {
-		console.table(currentCard);
-		// update card score
-		currentCard.score = chosenScore;
-
-		// push card back n deep in its own category
-		deck.pushBackCard(currentCard, 2);
-		console.table(deck.cards);
-
-		// do another
-		// cardTester.showNextCard(deck);
-	};
-
-	cardTester.handleClick = function (event) {
-		// depending on where you click we will do things
-		event.preventDefault();
-		const el = event.target;
-
-		// click one of the buttons to grade your card
-		if (el.classList.contains('testResponseButton')) {
-			cardTester.scoreCurrentCard(parseInt(el.innerText, 10));
-		}
-	};
-
-	cardTester.addEventListener('click', cardTester.handleClick);
 	cardTester.showNextCard(deck);
 };
 
@@ -140,15 +102,98 @@ deckViewer.handleClick = function (event) {
 deckViewer.addDeck = function (deckToBeAdded) {
 	// this function absorbs a deck of cards of the appropriate format
 	// and creates a new anchor element with all of the deck functions attached
+
+	let newId = deckViewer.querySelectorAll('.deck').length;
+
 	let newDeck = document.createElement('a');
 	newDeck.innerText = deckToBeAdded[0].tags[0];
 	newDeck.classList.add('deck');
+
+	// give id to the deck in the deck viewer
+	newDeck.dataset.id = newId;
 
 	newDeck.cards = [];
 
 	deckToBeAdded.forEach((card) => newDeck.cards.push(card));
 
 	this.appendChild(newDeck);
+
+	// also build a new cardTester element and store it in the cardViewer
+	// this allows the user to switch back and forth between decks
+	let newCardTester = document.createElement('div');
+	newCardTester.classList.add('cardTester');
+	newCardTester.classList.add('hidden');
+	// give matching id to the card tester we are adding
+	newCardTester.id = 'tester' + newId;
+
+	let newTestCardFront = document.createElement('div');
+	newTestCardFront.classList.add('testCardFront');
+	newCardTester.appendChild(newTestCardFront);
+
+	let newTestCardBack = document.createElement('div');
+	newTestCardBack.classList.add('testCardBack');
+	newCardTester.appendChild(newTestCardBack);
+
+	let newTestResponseContainer = document.createElement('div');
+	newTestResponseContainer.classList.add('testResponseContainer');
+
+	for (let i = 1; i <= 5; i++) {
+		let newTestResponseButton = document.createElement('a');
+		newTestResponseButton.classList.add('testResponseButton');
+		newTestResponseButton.innerText = i;
+		newTestResponseContainer.appendChild(newTestResponseButton);
+	}
+
+	newCardTester.handleClick = function (event) {
+		// depending on where you click we will do things
+		event.preventDefault();
+		console.log(event);
+		const el = event.target;
+
+		// click one of the buttons to grade your card
+		if (el.classList.contains('testResponseButton')) {
+			newCardTester.scoreCurrentCard(parseInt(el.innerText, 10));
+		}
+	};
+
+	newCardTester.appendChild(newTestResponseContainer);
+	newCardTester.addEventListener('click', newCardTester.handleClick);
+	cardViewer.appendChild(newCardTester);
+
+	let currentCard; // current card shown in tester screen to be scored
+	let displayFront = newCardTester.querySelector('.testCardFront');
+	let displayBack = newCardTester.querySelector('.testCardBack');
+
+	newCardTester.showNextCard = function (deck) {
+		// algorithm here to determine which card to show
+		console.table(deck.cards);
+		// if any score 1, show them all first before moving on to 2
+		if (deck.cardsWithScore(1).length > 0) {
+			currentCard = deck.cardsWithScore(1)[0];
+			displayFront.innerHTML = currentCard.front;
+			displayBack.innerHTML = currentCard.back;
+		}
+		// if any score 2, show all before 3s
+		else if (deck.cardsWithScore(2).length > 0) {
+			currentCard = deck.cardsWithScore(2)[0];
+			displayFront.innerHTML = currentCard.front;
+			displayBack.innerHTML = currentCard.back;
+		}
+		// weight scores 3, 4, 5 and five together
+		// default weights are 3 => 3, 4 => 2, 5 => 1, with an option not to show 5s
+	};
+
+	newCardTester.scoreCurrentCard = function (chosenScore) {
+		console.table(currentCard);
+		// update card score
+		currentCard.score = chosenScore;
+
+		// push card back n deep in its own category
+		newDeck.pushBackCard(currentCard, 2);
+
+		// do another
+		newCardTester.showNextCard(newDeck);
+	};
 
 	// validates structure
 
