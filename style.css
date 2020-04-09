@@ -43,6 +43,13 @@ body * {
 	border: 1px solid lightslategrey;
 }
 
+.deckSummary {
+	background: yellow;
+	margin: 5px auto;
+	width: 450px;
+	height: 70%;
+}
+
 .cardTester {
 	background: red;
 	margin: 10px auto;
