@@ -6,33 +6,33 @@ const modal = document.querySelector('#modal');
 
 let firstDeck = [
 	{
-		front: 'Q1',
-		back: 'A1',
-		tags: ['first deck'],
+		front: 'Alabama',
+		back: 'Montgomery',
+		tags: ['State Capitals'],
 		score: 1,
 	},
 	{
-		front: 'Q2',
-		back: 'A2',
-		tags: ['first deck'],
+		front: 'Alaska',
+		back: 'Juneau',
+		tags: ['State Capitals'],
 		score: 1,
 	},
 	{
-		front: 'Q3',
-		back: 'A3',
-		tags: ['first deck'],
+		front: 'Arizona',
+		back: 'Phoenix',
+		tags: ['State Capitals'],
 		score: 1,
 	},
 	{
-		front: 'Q4',
-		back: 'A4',
-		tags: ['first deck'],
+		front: 'Arkansas',
+		back: 'Little Rock',
+		tags: ['State Capitals'],
 		score: 1,
 	},
 	{
-		front: 'Q5',
-		back: 'A5',
-		tags: ['first deck'],
+		front: 'California',
+		back: 'Sacramento',
+		tags: ['State Capitals'],
 		score: 1,
 	},
 ];
