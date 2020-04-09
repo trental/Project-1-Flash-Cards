@@ -47,8 +47,17 @@ body * {
 .hidden {
 	display: none;
 }
+
 .minimize {
 	grid-template-rows: 100px 28px 1fr;
+}
+
+.testResponseButton {
+	width: 50px;
+	margin: 5px;
+	color: white;
+	background: blue;
+	display: inline-block;
 }
 
 @media (min-width: 600px) {
@@ -63,5 +72,4 @@ body * {
 		grid-template-columns: 40px 5fr;
 		grid-template-rows: 100px 1fr 0;
 	}
-
 }
