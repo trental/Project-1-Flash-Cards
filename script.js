@@ -2,6 +2,7 @@ const header = document.querySelector('.header');
 const deckViewer = document.querySelector('.deckViewer');
 const cardViewer = document.querySelector('.cardViewer');
 const body = document.querySelector('body');
+const modal = document.querySelector('#modal');
 
 let firstDeck = [
 	{
@@ -50,6 +51,20 @@ let secondDeck = [
 		score: 2,
 	},
 ];
+
+////////////////////////////////////////////////
+//
+// modal Functions
+//
+////////////////////////////////////////////////
+
+modal.addEventListener('click', function (event) {
+	event.preventDefault();
+	console.log(event.target.id);
+	if (event.target.id === 'close') {
+		modal.classList.add('hidden');
+	}
+});
 
 ////////////////////////////////////////////////
 //
@@ -164,34 +179,63 @@ deckViewer.addDeck = function (deckToBeAdded) {
 	let displayFront = newCardTester.querySelector('.testCardFront');
 	let displayBack = newCardTester.querySelector('.testCardBack');
 
-	newCardTester.showNextCard = function (deck) {
+	newDeck.cardsWithScore = function (searchScore) {
+		// function to have deck return cards with score
+		// console.log(this.cards);
+		return this.cards.filter((card) => card.score === searchScore);
+	};
+
+	newCardTester.showNextCard = function () {
 		// algorithm here to determine which card to show
-		console.table(deck.cards);
+		// console.table(newDeck.cards);
 		// if any score 1, show them all first before moving on to 2
-		if (deck.cardsWithScore(1).length > 0) {
-			currentCard = deck.cardsWithScore(1)[0];
+		if (newDeck.cardsWithScore(1).length > 0) {
+			currentCard = newDeck.cardsWithScore(1)[0];
 			displayFront.innerHTML = currentCard.front;
 			displayBack.innerHTML = currentCard.back;
 		}
 		// if any score 2, show all before 3s
-		else if (deck.cardsWithScore(2).length > 0) {
-			currentCard = deck.cardsWithScore(2)[0];
+		else if (newDeck.cardsWithScore(2).length > 0) {
+			currentCard = newDeck.cardsWithScore(2)[0];
 			displayFront.innerHTML = currentCard.front;
 			displayBack.innerHTML = currentCard.back;
 		} else {
 			// weight scores 3, 4, 5 and five together
-			// default weights are 3 => 3, 4 => 2, 5 => 1, with an option not to show 5s
-			let score3 = 3 / 6;
-			let score4 = 2 / 6;
-			let score5 = 1 / 6;
+			// default weights are 3 => 10, 4 => 3, 5 => 1, with an option not to show 5s
+
+			let include3;
+			let include4;
+			let include5;
+
+			if (newDeck.cardsWithScore(3).length > 0) {
+				include3 = 10;
+			} else {
+				include3 = 0;
+			}
+
+			if (newDeck.cardsWithScore(4).length > 0) {
+				include4 = 3;
+			} else {
+				include4 = 0;
+			}
+
+			if (newDeck.cardsWithScore(5).length > 0) {
+				include5 = 1;
+			} else {
+				include5 = 0;
+			}
+
+			let score3 = include3 / (include3 + include4 + include5);
+			let score4 = include4 / (include3 + include4 + include5);
+			let score5 = include5 / (include3 + include4 + include5);
 			let randomDraw = Math.random();
 			let drawScore;
 
-			if (randomDraw <= score3 && deck.cardsWithScore(3).length > 0) {
+			if (randomDraw <= score3 && newDeck.cardsWithScore(3).length > 0) {
 				drawScore = 3;
 			} else if (
 				randomDraw <= score3 + score4 &&
-				deck.cardsWithScore(4).length > 0
+				newDeck.cardsWithScore(4).length > 0
 			) {
 				drawScore = 4;
 			} else {
@@ -200,7 +244,11 @@ deckViewer.addDeck = function (deckToBeAdded) {
 
 			console.log(randomDraw + ' ' + drawScore);
 
-			currentCard = deck.cardsWithScore(drawScore)[0];
+			if (newDeck.cardsWithScore(5).length == newDeck.cards.length) {
+				modal.classList.remove('hidden');
+			}
+
+			currentCard = newDeck.cardsWithScore(drawScore)[0];
 			displayFront.innerHTML = currentCard.front;
 			displayBack.innerHTML = currentCard.back;
 		}
@@ -212,7 +260,17 @@ deckViewer.addDeck = function (deckToBeAdded) {
 		currentCard.score = chosenScore;
 
 		// push card back n deep in its own category
-		newDeck.pushBackCard(currentCard, 2);
+		if (chosenScore == 1) {
+			newDeck.pushBackCard(currentCard, 5);
+		} else if (chosenScore == 2) {
+			newDeck.pushBackCard(currentCard, 5);
+		} else if (chosenScore == 3) {
+			newDeck.pushBackCard(currentCard, 5);
+		} else if (chosenScore == 4) {
+			newDeck.pushBackCard(currentCard, 5);
+		} else {
+			newDeck.pushBackCard(currentCard, newDeck.cards.length);
+		}
 
 		// do another
 		newCardTester.showNextCard(newDeck);
@@ -222,17 +280,11 @@ deckViewer.addDeck = function (deckToBeAdded) {
 
 	// and displays the deck in the deck menu as an icon
 
-	newDeck.cardsWithScore = function (searchScore) {
-		// function to have deck return cards with score
-		// console.log(this.cards);
-		return this.cards.filter((card) => card.score === searchScore);
-	};
-
 	newDeck.pushBackCard = function (cardToPush, howFarBack) {
 		// reorganize cards in deck by pushing back the required amt in cards of the same score
 		console.log(cardToPush, howFarBack + ' cards back');
 
-		let deckSize = this.cards.length;
+		let deckSize = newDeck.cards.length;
 		let i = 0; // track how many move backs have happened
 		let j = this.cards.indexOf(cardToPush);
 		let tempCard;
