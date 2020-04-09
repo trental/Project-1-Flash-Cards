@@ -80,13 +80,94 @@ cardViewer.hideAllCardTesters = function () {
 	});
 };
 
-cardViewer.presentCards = function (deck) {
-	this.hideAllCardTesters();
-	//let cardTesters = cardViewer.querySelectorAll('.cardTester');
-	let cardTester = cardViewer.querySelector('#tester' + deck.dataset.id);
-	cardTester.classList.remove('hidden');
+cardViewer.hideAllCardSummaries = function () {
+	let deckSummaries = [...this.querySelectorAll('.deckSummary')]; // convert to node list
 
+	deckSummaries.forEach((deckSummary) => {
+		deckSummary.classList.add('hidden');
+	});
+};
+
+cardViewer.presentCards = function (event) {
+	cardViewer.hideAllCardTesters();
+	cardViewer.hideAllCardSummaries();
+	// event.preventDefault();
+	console.log(event.target);
+
+	let deckId = event.target.dataset.deckid;
+	const deck = deckViewer.querySelector('#deck' + deckId);
+
+	let cardTesters = cardViewer.querySelectorAll('.cardTester');
+
+	let cardTester = cardViewer.querySelector(
+		'#tester' + event.target.dataset.deckid
+	);
+	cardTester.classList.remove('hidden');
 	cardTester.showNextCard(deck);
+};
+
+cardViewer.presentSummary = function (deck) {
+	cardViewer.hideAllCardTesters();
+	cardViewer.hideAllCardSummaries();
+	//let cardTesters = cardViewer.querySelectorAll('.cardTester');
+
+	let deckSummary = cardViewer.querySelector('#summary' + deck.dataset.id);
+	deckSummary.classList.remove('hidden');
+};
+
+cardViewer.addSummary = function (deck) {
+	let newSummary = document.createElement('div');
+	newSummary.classList.add('deckSummary');
+	newSummary.classList.add('hidden');
+	newSummary.id = 'summary' + deck.dataset.id;
+
+	let newDeckName = document.createElement('h1');
+	newDeckName.innerText = deck.innerText;
+	newSummary.appendChild(newDeckName);
+
+	let newScoringSummary = document.createElement('h4');
+	newScoringSummary.innerText = 'Scoring Summary';
+	let newScore1 = document.createElement('div');
+	newScore1.dataset.id = 'count1';
+	newScore1.innerText = '1:';
+	let newScore2 = document.createElement('div');
+	newScore2.dataset.id = 'count2';
+	newScore2.innerText = '2:';
+	let newScore3 = document.createElement('div');
+	newScore3.dataset.id = 'count3';
+	newScore3.innerText = '3:';
+	let newScore4 = document.createElement('div');
+	newScore4.dataset.id = 'count4';
+	newScore4.innerText = '4:';
+	let newScore5 = document.createElement('div');
+	newScore5.dataset.id = 'count5';
+	newScore5.innerText = '5:';
+	let newTotal = document.createElement('div');
+	newTotal.dataset.id = 'countTotal';
+	newTotal.innerText = 'Total:';
+	newSummary.appendChild(newScoringSummary);
+	newSummary.appendChild(newScore1);
+	newSummary.appendChild(newScore2);
+	newSummary.appendChild(newScore3);
+	newSummary.appendChild(newScore4);
+	newSummary.appendChild(newScore5);
+	newSummary.appendChild(newTotal);
+
+	let newTags = document.createElement('h4');
+	newTags.innerText = 'Tags';
+	let tags = document.createElement('div');
+	tags.dataset.id = 'tags';
+	newSummary.appendChild(newTags);
+	newSummary.appendChild(tags);
+
+	let newLearnButton = document.createElement('a');
+	newLearnButton.innerText = 'Learn this deck';
+	newLearnButton.classList.add('deck');
+	newLearnButton.addEventListener('click', cardViewer.presentCards);
+	newLearnButton.dataset.deckid = deck.dataset.id;
+	newSummary.appendChild(newLearnButton);
+
+	cardViewer.appendChild(newSummary);
 };
 
 ////////////////////////////////////////////////
@@ -105,7 +186,7 @@ deckViewer.handleClick = function (event) {
 	// select a deck to view / practice / edit / download
 	if (el.classList.contains('deck')) {
 		// console.log(el.cards);
-		cardViewer.presentCards(el);
+		cardViewer.presentSummary(el);
 	} else {
 		// expand or contract menu
 		body.classList.toggle('minimize');
@@ -126,12 +207,17 @@ deckViewer.addDeck = function (deckToBeAdded) {
 
 	// give id to the deck in the deck viewer
 	newDeck.dataset.id = newId;
+	newDeck.id = 'deck' + newId;
 
 	newDeck.cards = [];
 
 	deckToBeAdded.forEach((card) => newDeck.cards.push(card));
 
 	this.appendChild(newDeck);
+
+	// also build a deck summary page that can be rotated through to see
+	// details about the deck
+	cardViewer.addSummary(newDeck);
 
 	// also build a new cardTester element and store it in the cardViewer
 	// this allows the user to switch back and forth between decks
