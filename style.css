@@ -12,10 +12,18 @@ body {
 	grid-template-rows: 100px 400px 1fr;
 }
 
+.deck {
+	background: green;
+	display: block;
+	margin: 2px;
+}
+
 body * {
 	background: lightgrey;
 	border: 1px solid lightslategrey;
 }
+
+
 
 .minimize {
 	grid-template-rows: 100px 40px 1fr;
