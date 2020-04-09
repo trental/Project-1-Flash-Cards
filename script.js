@@ -178,13 +178,36 @@ deckViewer.addDeck = function (deckToBeAdded) {
 			currentCard = deck.cardsWithScore(2)[0];
 			displayFront.innerHTML = currentCard.front;
 			displayBack.innerHTML = currentCard.back;
+		} else {
+			// weight scores 3, 4, 5 and five together
+			// default weights are 3 => 3, 4 => 2, 5 => 1, with an option not to show 5s
+			let score3 = 3 / 6;
+			let score4 = 2 / 6;
+			let score5 = 1 / 6;
+			let randomDraw = Math.random();
+			let drawScore;
+
+			if (randomDraw <= score3 && deck.cardsWithScore(3).length > 0) {
+				drawScore = 3;
+			} else if (
+				randomDraw <= score3 + score4 &&
+				deck.cardsWithScore(4).length > 0
+			) {
+				drawScore = 4;
+			} else {
+				drawScore = 5;
+			}
+
+			console.log(randomDraw + ' ' + drawScore);
+
+			currentCard = deck.cardsWithScore(drawScore)[0];
+			displayFront.innerHTML = currentCard.front;
+			displayBack.innerHTML = currentCard.back;
 		}
-		// weight scores 3, 4, 5 and five together
-		// default weights are 3 => 3, 4 => 2, 5 => 1, with an option not to show 5s
 	};
 
 	newCardTester.scoreCurrentCard = function (chosenScore) {
-		console.table(currentCard);
+		// console.table(currentCard);
 		// update card score
 		currentCard.score = chosenScore;
 
@@ -206,9 +229,21 @@ deckViewer.addDeck = function (deckToBeAdded) {
 	};
 
 	newDeck.pushBackCard = function (cardToPush, howFarBack) {
-		// reorganize cards in deck
+		// reorganize cards in deck by pushing back the required amt in cards of the same score
 		console.log(cardToPush, howFarBack + ' cards back');
-		console.log(this.cards.indexOf(cardToPush));
+
+		let deckSize = this.cards.length;
+		let i = 0; // track how many move backs have happened
+		let j = this.cards.indexOf(cardToPush);
+		let tempCard;
+
+		while (i < howFarBack && j <= deckSize - 2) {
+			tempCard = this.cards[j + 1];
+			this.cards[j + 1] = cardToPush;
+			this.cards[j] = tempCard;
+			i++;
+			j = this.cards.indexOf(cardToPush);
+		}
 	};
 };
 
