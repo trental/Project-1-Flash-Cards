@@ -112,6 +112,8 @@ cardViewer.presentSummary = function (deck) {
 	//let cardTesters = cardViewer.querySelectorAll('.cardTester');
 
 	let deckSummary = cardViewer.querySelector('#summary' + deck.dataset.id);
+
+	deckSummary.refreshStats();
 	deckSummary.classList.remove('hidden');
 };
 
@@ -152,6 +154,22 @@ cardViewer.addSummary = function (deck) {
 	newSummary.appendChild(newScore4);
 	newSummary.appendChild(newScore5);
 	newSummary.appendChild(newTotal);
+
+	newSummary.refreshStats = function () {
+		let count1 = deck.cardsWithScore(1).length;
+		let count2 = deck.cardsWithScore(2).length;
+		let count3 = deck.cardsWithScore(3).length;
+		let count4 = deck.cardsWithScore(4).length;
+		let count5 = deck.cardsWithScore(5).length;
+		let countTotal = count1 + count2 + count3 + count4 + count5;
+
+		newScore1.innerText = '1: ' + count1;
+		newScore2.innerText = '2: ' + count2;
+		newScore3.innerText = '3: ' + count3;
+		newScore4.innerText = '4: ' + count4;
+		newScore5.innerText = '5: ' + count5;
+		newTotal.innerText = 'Total: ' + countTotal;
+	};
 
 	let newTags = document.createElement('h4');
 	newTags.innerText = 'Tags';
