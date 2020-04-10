@@ -40,7 +40,7 @@ let firstDeck = [
 		back: 'Denver',
 		tags: ['State Capitals'],
 		score: 1,
-	},	
+	},
 ];
 
 let secondDeck = [
@@ -66,7 +66,6 @@ let secondDeck = [
 
 modal.addEventListener('click', function (event) {
 	event.preventDefault();
-	console.log(event.target.id);
 	if (event.target.id === 'close') {
 		modal.classList.add('hidden');
 	}
@@ -79,54 +78,76 @@ modal.addEventListener('click', function (event) {
 ////////////////////////////////////////////////
 
 cardViewer.hideAllCardTesters = function () {
-	let cardTesters = [...this.querySelectorAll('.cardTester')]; // convert to node list
+	return new Promise((resolve) => {
+		// hide everything - is this efficient?
+		let cardTesters = [...this.querySelectorAll('.cardTester')]; // convert to node list
 
-	cardTesters.forEach((cardTester) => {
-		cardTester.classList.add('hidden');
+		cardTesters.forEach((cardTester) => {
+			cardTester.classList.add('hidden');
+		});
+
+		this.dataset.current = '';
+
+		resolve();
 	});
 };
 
 cardViewer.hideAllCardSummaries = function () {
-	let deckSummaries = [...this.querySelectorAll('.deckSummary')]; // convert to node list
+	return new Promise((resolve) => {
+		// hide everything - is this efficient?
+		let deckSummaries = [...this.querySelectorAll('.deckSummary')]; // convert to node list
 
-	deckSummaries.forEach((deckSummary) => {
-		deckSummary.classList.add('hidden');
+		deckSummaries.forEach((deckSummary) => {
+			deckSummary.classList.add('hidden');
+		});
+
+		this.dataset.current = '';
+
+		resolve();
 	});
 };
 
 cardViewer.presentCards = function (event) {
-	cardViewer.hideAllCardTesters();
-	cardViewer.hideAllCardSummaries();
-	// event.preventDefault();
-	console.log(event.target);
+	// Promise here bc the dataset was being written and then over-written bc of async
+	Promise.all([
+		// hide everything - is this efficient?
+		cardViewer.hideAllCardTesters(),
+		cardViewer.hideAllCardSummaries(),
+	]).then(() => {
+		// event.preventDefault();
 
-	let deckId = event.target.dataset.deckid;
-	const deck = deckViewer.querySelector('#deck' + deckId);
+		let deckId = event.target.dataset.deckid;
+		const deck = deckViewer.querySelector('#deck' + deckId);
 
-	let cardTesters = cardViewer.querySelectorAll('.cardTester');
+		let cardTester = cardViewer.querySelector('#tester' + deckId);
 
-	let cardTester = cardViewer.querySelector(
-		'#tester' + event.target.dataset.deckid
-	);
-	cardTester.classList.remove('hidden');
-	cardTester.showNextCard(deck);
+		cardTester.classList.remove('hidden');
+		cardViewer.dataset.current = 'tester' + deckId;
+
+		cardTester.showNextCard(deck);
+	});
 };
 
 cardViewer.presentSummary = function (deck) {
-	cardViewer.hideAllCardTesters();
-	cardViewer.hideAllCardSummaries();
-	//let cardTesters = cardViewer.querySelectorAll('.cardTester');
+	// Promise here bc the dataset was being written and then over-written bc of async
+	Promise.all([
+		cardViewer.hideAllCardTesters(),
+		cardViewer.hideAllCardSummaries(),
+	]).then(() => {
+		//let cardTesters = cardViewer.querySelectorAll('.cardTester');
 
-	let deckSummary = cardViewer.querySelector('#summary' + deck.dataset.id);
+		let deckSummary = cardViewer.querySelector('#summary' + deck.dataset.id);
 
-	deckSummary.refreshStats();
-	deckSummary.classList.remove('hidden');
+		deckSummary.refreshStats();
+		deckSummary.classList.remove('hidden');
+		cardViewer.dataset.current = 'summary' + deck.dataset.id;
+	});
 };
 
 cardViewer.addSummary = function (deck) {
 	// clone the template, add id and event listeners and refresh logic
 	let summaryTemplate = document.querySelector('#summaryTemplate');
-	let newSummary = summaryTemplate.cloneNode(true); 
+	let newSummary = summaryTemplate.cloneNode(true);
 
 	newSummary.id = 'summary' + deck.dataset.id;
 
@@ -150,18 +171,23 @@ cardViewer.addSummary = function (deck) {
 			summaryCounts[i].innerText = i + 1 + ': ' + count[i];
 		}
 		summaryCounts[summaryCounts.length - 1].innerText = 'Total: ' + countTotal;
-	
+
 		// tags
 		let tags = [];
 		deck.cards.forEach((card) => {
 			card.tags.forEach((tag) => {
-				if (!tags.includes(tag)){
-					tags.push(tag)
+				if (!tags.includes(tag)) {
+					tags.push(tag);
 				}
-			})
-		})
+			});
+		});
 
-		newSummary.querySelector(".listOfTags").innerText = tags.join(", ")
+		newSummary.querySelector('.listOfTags').innerText = tags.join(', ');
+	};
+
+	newSummary.handleKey = function (event) {
+		// nothing here yet
+		return true;
 	};
 
 	// assign the learn button to the correct deck tester
@@ -172,6 +198,16 @@ cardViewer.addSummary = function (deck) {
 
 	// lastly attach the finaly page to the viewer window
 	cardViewer.appendChild(newSummary);
+};
+
+cardViewer.handleKey = function (event) {
+	// if there's a viewer window showing then pass in the keyboard
+	if (cardViewer.dataset.current != '') {
+		let currentView = cardViewer.querySelector(
+			'#' + cardViewer.dataset.current
+		);
+		currentView.handleKey(event);
+	}
 };
 
 ////////////////////////////////////////////////
@@ -198,6 +234,10 @@ deckViewer.handleClick = function (event) {
 
 	// upload / link a deck
 };
+
+// deckViewer.handleKey = function (event) {
+// 	console.log(event.code);
+// };
 
 deckViewer.addDeck = function (deckToBeAdded) {
 	// this function absorbs a deck of cards of the appropriate format
@@ -237,8 +277,6 @@ deckViewer.addDeck = function (deckToBeAdded) {
 		event.preventDefault();
 		const el = event.target;
 
-		console.log(event.code)
-
 		// click one of the buttons to grade your card
 		if (el.classList.contains('testResponseButton')) {
 			newCardTester.scoreCurrentCard(parseInt(el.innerText, 10));
@@ -247,12 +285,19 @@ deckViewer.addDeck = function (deckToBeAdded) {
 		}
 	};
 
-	newCardTester.addEventListener('click', newCardTester.handleClick);
-	// newCardTester.addEventListener('keyup', newCardTester.handleClick)
+	newCardTester.handleKey = function (event) {
+		let keyPressed = event.code;
+		let numPressed = keyPressed.charAt(keyPressed.length - 1);
 
-	newCardTester.addEventListener('keyup', (e) => {
-		console.log(e.code)
-	})	
+		if (newCardTester.getTestButtons() == 'reveal') {
+			newCardTester.revealCurrentCard();
+		} else if (['1', '2', '3', '4', '5'].includes(numPressed)) {
+			// console.log(numPressed);
+			newCardTester.scoreCurrentCard(parseInt(numPressed, 10));
+		}
+	};
+
+	newCardTester.addEventListener('click', newCardTester.handleClick);
 
 	cardViewer.appendChild(newCardTester);
 
@@ -266,25 +311,40 @@ deckViewer.addDeck = function (deckToBeAdded) {
 		return this.cards.filter((card) => card.score === searchScore);
 	};
 
-	newCardTester.setTestButtons = function (direction = "reveal") {
-		return new Promise((resolve) => {
-			// set to reveal or score
-			if (direction === "reveal") {
-				newCardTester.querySelector(".testResponseGrades").classList.remove("hidden")
-				newCardTester.querySelector(".testRevealButton").classList.add("hidden")
-				newCardTester.querySelector(".testCardBack").classList.remove("hidden")
-				newCardTester.querySelector(".testCardSecret").classList.add("hidden")
-		
-			} else {
-				newCardTester.querySelector(".testResponseGrades").classList.add("hidden")
-				newCardTester.querySelector(".testRevealButton").classList.remove("hidden")
-				newCardTester.querySelector(".testCardBack").classList.add("hidden")
-				newCardTester.querySelector(".testCardSecret").classList.remove("hidden")		
-		
-			}
-			resolve();
-		})
-	}
+	newCardTester.setTestButtons = function (direction = 'reveal') {
+		// set to reveal or score
+		if (direction === 'reveal') {
+			newCardTester
+				.querySelector('.testResponseGrades')
+				.classList.remove('hidden');
+			newCardTester.querySelector('.testRevealButton').classList.add('hidden');
+			newCardTester.querySelector('.testCardBack').classList.remove('hidden');
+			newCardTester.querySelector('.testCardSecret').classList.add('hidden');
+		} else {
+			newCardTester
+				.querySelector('.testResponseGrades')
+				.classList.add('hidden');
+			newCardTester
+				.querySelector('.testRevealButton')
+				.classList.remove('hidden');
+			newCardTester.querySelector('.testCardBack').classList.add('hidden');
+			newCardTester.querySelector('.testCardSecret').classList.remove('hidden');
+		}
+	};
+
+	newCardTester.getTestButtons = function () {
+		// return reveal or score
+
+		if (
+			newCardTester
+				.querySelector('.testRevealButton')
+				.classList.contains('hidden')
+		) {
+			return 'score';
+		} else {
+			return 'reveal';
+		}
+	};
 
 	newCardTester.showNextCard = function () {
 		// algorithm here to determine which card to show
@@ -338,24 +398,19 @@ deckViewer.addDeck = function (deckToBeAdded) {
 				drawScore = 5;
 			}
 
-			console.log(randomDraw + ' ' + drawScore);
-
 			// show "completed" modal if all cards have score 5
 			if (newDeck.cardsWithScore(5).length == newDeck.cards.length) {
 				modal.classList.remove('hidden');
 			}
 
 			currentCard = newDeck.cardsWithScore(drawScore)[0];
-
-		}	
+		}
 
 		displayFront.innerHTML = currentCard.front;
 		displayBack.innerHTML = currentCard.back;
 
 		// hide answer and scoring buttons
-		newCardTester.setTestButtons("score")
-		.then(newCardTester.focus());
-
+		newCardTester.setTestButtons('score');
 	};
 
 	newCardTester.scoreCurrentCard = function (chosenScore) {
@@ -382,9 +437,8 @@ deckViewer.addDeck = function (deckToBeAdded) {
 
 	// reveal answer and scoring buttons
 	newCardTester.revealCurrentCard = function () {
-		newCardTester.setTestButtons("reveal")
-		.then(newCardTester.focus());		
-	}
+		newCardTester.setTestButtons('reveal');
+	};
 
 	// validates structure
 
@@ -392,7 +446,6 @@ deckViewer.addDeck = function (deckToBeAdded) {
 
 	newDeck.pushBackCard = function (cardToPush, howFarBack) {
 		// reorganize cards in deck by pushing back the required amt in cards of the same score
-		console.log(cardToPush, howFarBack + ' cards back');
 
 		let deckSize = newDeck.cards.length;
 		let i = 0; // track how many move backs have happened
@@ -409,9 +462,18 @@ deckViewer.addDeck = function (deckToBeAdded) {
 	};
 };
 
+////////////////////////////////////////////////
+//
+// body Functions ;)
+//
+////////////////////////////////////////////////
 
+body.handleKey = function (event) {
+	cardViewer.handleKey(event);
+};
 
 deckViewer.addEventListener('click', deckViewer.handleClick);
+body.addEventListener('keyup', body.handleKey);
 
 // load first decks
 deckViewer.addDeck(firstDeck);
