@@ -35,6 +35,12 @@ let firstDeck = [
 		tags: ['State Capitals'],
 		score: 1,
 	},
+	{
+		front: 'Colorado',
+		back: 'Denver',
+		tags: ['State Capitals'],
+		score: 1,
+	},	
 ];
 
 let secondDeck = [
@@ -231,6 +237,8 @@ deckViewer.addDeck = function (deckToBeAdded) {
 		event.preventDefault();
 		const el = event.target;
 
+		console.log(event.code)
+
 		// click one of the buttons to grade your card
 		if (el.classList.contains('testResponseButton')) {
 			newCardTester.scoreCurrentCard(parseInt(el.innerText, 10));
@@ -240,6 +248,12 @@ deckViewer.addDeck = function (deckToBeAdded) {
 	};
 
 	newCardTester.addEventListener('click', newCardTester.handleClick);
+	// newCardTester.addEventListener('keyup', newCardTester.handleClick)
+
+	newCardTester.addEventListener('keyup', (e) => {
+		console.log(e.code)
+	})	
+
 	cardViewer.appendChild(newCardTester);
 
 	let currentCard; // current card shown in tester screen to be scored
@@ -251,6 +265,26 @@ deckViewer.addDeck = function (deckToBeAdded) {
 		// console.log(this.cards);
 		return this.cards.filter((card) => card.score === searchScore);
 	};
+
+	newCardTester.setTestButtons = function (direction = "reveal") {
+		return new Promise((resolve) => {
+			// set to reveal or score
+			if (direction === "reveal") {
+				newCardTester.querySelector(".testResponseGrades").classList.remove("hidden")
+				newCardTester.querySelector(".testRevealButton").classList.add("hidden")
+				newCardTester.querySelector(".testCardBack").classList.remove("hidden")
+				newCardTester.querySelector(".testCardSecret").classList.add("hidden")
+		
+			} else {
+				newCardTester.querySelector(".testResponseGrades").classList.add("hidden")
+				newCardTester.querySelector(".testRevealButton").classList.remove("hidden")
+				newCardTester.querySelector(".testCardBack").classList.add("hidden")
+				newCardTester.querySelector(".testCardSecret").classList.remove("hidden")		
+		
+			}
+			resolve();
+		})
+	}
 
 	newCardTester.showNextCard = function () {
 		// algorithm here to determine which card to show
@@ -290,7 +324,6 @@ deckViewer.addDeck = function (deckToBeAdded) {
 
 			let score3 = include3 / (include3 + include4 + include5);
 			let score4 = include4 / (include3 + include4 + include5);
-			let score5 = include5 / (include3 + include4 + include5);
 			let randomDraw = Math.random();
 			let drawScore;
 
@@ -319,10 +352,10 @@ deckViewer.addDeck = function (deckToBeAdded) {
 		displayFront.innerHTML = currentCard.front;
 		displayBack.innerHTML = currentCard.back;
 
-		newCardTester.querySelector(".testResponseGrades").classList.add("hidden")
-		newCardTester.querySelector(".testRevealButton").classList.remove("hidden")
-		newCardTester.querySelector(".testCardBack").classList.add("hidden")
-		newCardTester.querySelector(".testCardSecret").classList.remove("hidden")		
+		// hide answer and scoring buttons
+		newCardTester.setTestButtons("score")
+		.then(newCardTester.focus());
+
 	};
 
 	newCardTester.scoreCurrentCard = function (chosenScore) {
@@ -347,11 +380,10 @@ deckViewer.addDeck = function (deckToBeAdded) {
 		newCardTester.showNextCard(newDeck);
 	};
 
+	// reveal answer and scoring buttons
 	newCardTester.revealCurrentCard = function () {
-		newCardTester.querySelector(".testResponseGrades").classList.remove("hidden")
-		newCardTester.querySelector(".testRevealButton").classList.add("hidden")
-		newCardTester.querySelector(".testCardBack").classList.remove("hidden")
-		newCardTester.querySelector(".testCardSecret").classList.add("hidden")		
+		newCardTester.setTestButtons("reveal")
+		.then(newCardTester.focus());		
 	}
 
 	// validates structure
@@ -376,6 +408,8 @@ deckViewer.addDeck = function (deckToBeAdded) {
 		}
 	};
 };
+
+
 
 deckViewer.addEventListener('click', deckViewer.handleClick);
 
