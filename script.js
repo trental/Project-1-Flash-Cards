@@ -196,6 +196,21 @@ cardViewer.addSummary = function (deck) {
 	newLearnButton.addEventListener('click', cardViewer.presentCards);
 	newLearnButton.dataset.deckid = deck.dataset.id;
 
+	let newToggleFrontButton = newSummary.querySelector('.toggleFront');
+	let newToggleBackButton = newSummary.querySelector('.toggleBack');
+
+	newToggleFrontButton.addEventListener('click', () => {
+		newToggleFrontButton.classList.add('toggleShowSelected');
+		newToggleBackButton.classList.remove('toggleShowSelected');
+		deck.showQuestion = true;
+	});
+
+	newToggleBackButton.addEventListener('click', () => {
+		newToggleFrontButton.classList.remove('toggleShowSelected');
+		newToggleBackButton.classList.add('toggleShowSelected');
+		deck.showQuestion = false;
+	});
+
 	// lastly attach the finaly page to the viewer window
 	cardViewer.appendChild(newSummary);
 };
@@ -254,6 +269,10 @@ deckViewer.addDeck = function (deckToBeAdded) {
 	newDeck.id = 'deck' + newId;
 
 	newDeck.cards = [];
+
+	// showQuestion == true will have the question show and the answer hidden
+	// false will have the question hidden and the answer shown
+	newDeck.showQuestion = true;
 
 	deckToBeAdded.forEach((card) => newDeck.cards.push(card));
 
@@ -318,8 +337,6 @@ deckViewer.addDeck = function (deckToBeAdded) {
 				.querySelector('.testResponseGrades')
 				.classList.remove('hidden');
 			newCardTester.querySelector('.testRevealButton').classList.add('hidden');
-			newCardTester.querySelector('.testCardBack').classList.remove('hidden');
-			newCardTester.querySelector('.testCardSecret').classList.add('hidden');
 		} else {
 			newCardTester
 				.querySelector('.testResponseGrades')
@@ -327,8 +344,54 @@ deckViewer.addDeck = function (deckToBeAdded) {
 			newCardTester
 				.querySelector('.testRevealButton')
 				.classList.remove('hidden');
-			newCardTester.querySelector('.testCardBack').classList.add('hidden');
-			newCardTester.querySelector('.testCardSecret').classList.remove('hidden');
+		}
+
+		if (direction === 'reveal') {
+			if (newDeck.showQuestion) {
+				newCardTester.querySelector('.testCardBack').classList.remove('hidden');
+				newCardTester
+					.querySelector('.testCardSecretBack')
+					.classList.add('hidden');
+				newCardTester
+					.querySelector('.testCardFront')
+					.classList.remove('hidden');
+				newCardTester
+					.querySelector('.testCardSecretFront')
+					.classList.add('hidden');
+			} else {
+				newCardTester.querySelector('.testCardBack').classList.remove('hidden');
+				newCardTester
+					.querySelector('.testCardSecretBack')
+					.classList.add('hidden');
+				newCardTester
+					.querySelector('.testCardFront')
+					.classList.remove('hidden');
+				newCardTester
+					.querySelector('.testCardSecretFront')
+					.classList.add('hidden');
+			}
+		} else {
+			if (newDeck.showQuestion) {
+				newCardTester.querySelector('.testCardBack').classList.add('hidden');
+				newCardTester
+					.querySelector('.testCardSecretBack')
+					.classList.remove('hidden');
+				newCardTester
+					.querySelector('.testCardFront')
+					.classList.remove('hidden');
+				newCardTester
+					.querySelector('.testCardSecretFront')
+					.classList.add('hidden');
+			} else {
+				newCardTester.querySelector('.testCardBack').classList.remove('hidden');
+				newCardTester
+					.querySelector('.testCardSecretBack')
+					.classList.add('hidden');
+				newCardTester.querySelector('.testCardFront').classList.add('hidden');
+				newCardTester
+					.querySelector('.testCardSecretFront')
+					.classList.remove('hidden');
+			}
 		}
 	};
 
@@ -460,6 +523,8 @@ deckViewer.addDeck = function (deckToBeAdded) {
 			j = this.cards.indexOf(cardToPush);
 		}
 	};
+
+	newCardTester.showNextCard(newDeck);
 };
 
 ////////////////////////////////////////////////

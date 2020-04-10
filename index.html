@@ -10,13 +10,14 @@
 		<section class="deckViewer">DECKS</section>
 		<section class="cardViewer" data-current="">
 			VIEWER
-			<div class="cardTester hidden" id="testerTemplate" tabindex="1">
+			<div class="cardTester hidden" id="testerTemplate">
 				<div class="testCardFront"></div>
-				<div class="testCardBack hidden"></div>
-				<div class="testCardSecret"></div>
+				<div class="testCardSecretFront"></div>
+				<div class="testCardBack"></div>
+				<div class="testCardSecretBack"></div>
 				<div class="testResponseContainer">
 					<a class="testRevealButton">Show Answer</a>
-					<div class="testResponseGrades hidden">
+					<div class="testResponseGrades">
 						<a class="testResponseButton">1</a>
 						<a class="testResponseButton">2</a>
 						<a class="testResponseButton">3</a>
@@ -36,6 +37,10 @@
 				<div data-id="countTotal" class="summaryCounts">Total: 0</div>
 				<h4>Tags</h4>
 				<div data-id="tags" class="listOfTags"></div>
+				<div>
+					<a class="toggleFront toggleDeckShow toggleShowSelected">Show Front</a
+					><-><a class="toggleBack toggleDeckShow">Show Back</a>
+				</div>
 				<a class="deck learnButton" data-deckid="0">Learn this deck</a>
 			</div>
 		</section>

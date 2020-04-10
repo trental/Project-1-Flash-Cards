@@ -71,7 +71,14 @@ body * {
 	height: 40%;
 }
 
-.testCardSecret {
+.testCardSecretFront {
+	background: #aaaaaa;
+	margin: 10px auto;
+	width: 90%;
+	height: 40%;
+}
+
+.testCardSecretBack {
 	background: #aaaaaa;
 	margin: 10px auto;
 	width: 90%;
@@ -96,6 +103,19 @@ body * {
 	color: white;
 	background: blue;
 	display: inline-block;
+}
+
+.toggleDeckShow {
+	width: 100px;
+	margin: 5px;
+	color: white;
+	background: green;
+	display: inline-block;
+	border: 2px solid lightgrey;
+}
+
+.toggleShowSelected {
+	border: 2px solid black;
 }
 
 .hidden {
