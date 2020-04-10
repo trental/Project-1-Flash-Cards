@@ -4,60 +4,6 @@ const cardViewer = document.querySelector('.cardViewer');
 const body = document.querySelector('body');
 const modal = document.querySelector('#modal');
 
-let firstDeck = [
-	{
-		front: 'Alabama',
-		back: 'Montgomery',
-		tags: ['State Capitals', 'Alabama'],
-		score: 1,
-	},
-	{
-		front: 'Alaska',
-		back: 'Juneau',
-		tags: ['State Capitals'],
-		score: 1,
-	},
-	{
-		front: 'Arizona',
-		back: 'Phoenix',
-		tags: ['State Capitals'],
-		score: 1,
-	},
-	{
-		front: 'Arkansas',
-		back: 'Little Rock',
-		tags: ['State Capitals'],
-		score: 1,
-	},
-	{
-		front: 'California',
-		back: 'Sacramento',
-		tags: ['State Capitals'],
-		score: 1,
-	},
-	{
-		front: 'Colorado',
-		back: 'Denver',
-		tags: ['State Capitals'],
-		score: 1,
-	},
-];
-
-let secondDeck = [
-	{
-		front: 'first front',
-		back: 'first back',
-		tags: ['second deck'],
-		score: 1,
-	},
-	{
-		front: 'second front',
-		back: 'second back',
-		tags: ['second deck'],
-		score: 2,
-	},
-];
-
 ////////////////////////////////////////////////
 //
 // modal Functions
@@ -242,6 +188,10 @@ deckViewer.handleClick = function (event) {
 	if (el.classList.contains('deck')) {
 		// console.log(el.cards);
 		cardViewer.presentSummary(el);
+		let decks = [...deckViewer.querySelectorAll('a')];
+
+		decks.forEach((deck) => deck.classList.remove('toggleShowSelected'));
+		el.classList.add('toggleShowSelected');
 	} else {
 		// expand or contract menu
 		body.classList.toggle('minimize');
@@ -541,5 +491,5 @@ deckViewer.addEventListener('click', deckViewer.handleClick);
 body.addEventListener('keyup', body.handleKey);
 
 // load first decks
-deckViewer.addDeck(firstDeck);
-deckViewer.addDeck(secondDeck);
+deckViewer.addDeck(uscapitals);
+// deckViewer.addDeck(uspresidents);
