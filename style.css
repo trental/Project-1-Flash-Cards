@@ -71,8 +71,11 @@ body * {
 	height: 40%;
 }
 
-.hidden {
-	display: none;
+.testCardSecret {
+	background: #AAAAAA;
+	margin: 10px auto;
+	width: 90%;
+	height: 40%;
 }
 
 .minimize {
@@ -85,6 +88,18 @@ body * {
 	color: white;
 	background: blue;
 	display: inline-block;
+}
+
+.testRevealButton {
+	width: 250px;
+	margin: 5px;
+	color: white;
+	background: blue;
+	display: inline-block;
+}
+
+.hidden {
+	display: none;
 }
 
 @media (min-width: 600px) {

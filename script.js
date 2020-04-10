@@ -8,7 +8,7 @@ let firstDeck = [
 	{
 		front: 'Alabama',
 		back: 'Montgomery',
-		tags: ['State Capitals'],
+		tags: ['State Capitals', 'Alabama'],
 		score: 1,
 	},
 	{
@@ -118,14 +118,18 @@ cardViewer.presentSummary = function (deck) {
 };
 
 cardViewer.addSummary = function (deck) {
+	// clone the template, add id and event listeners and refresh logic
 	let summaryTemplate = document.querySelector('#summaryTemplate');
-	let newSummary = summaryTemplate.cloneNode(true); // clone the template, add id and event listeners
+	let newSummary = summaryTemplate.cloneNode(true); 
 
 	newSummary.id = 'summary' + deck.dataset.id;
 
 	newSummary.querySelector('h1').innerText = deck.innerText;
 
+	// function here that refreshes the data on the stats bc
+	// as cards are learned or edited we need updates
 	newSummary.refreshStats = function () {
+		// counts
 		let count = [];
 		let countTotal = 0;
 		for (let i = 1; i <= 5; i++) {
@@ -140,14 +144,27 @@ cardViewer.addSummary = function (deck) {
 			summaryCounts[i].innerText = i + 1 + ': ' + count[i];
 		}
 		summaryCounts[summaryCounts.length - 1].innerText = 'Total: ' + countTotal;
+	
+		// tags
+		let tags = [];
+		deck.cards.forEach((card) => {
+			card.tags.forEach((tag) => {
+				if (!tags.includes(tag)){
+					tags.push(tag)
+				}
+			})
+		})
+
+		newSummary.querySelector(".listOfTags").innerText = tags.join(", ")
 	};
 
+	// assign the learn button to the correct deck tester
 	let newLearnButton = newSummary.querySelector('.learnButton');
 
 	newLearnButton.addEventListener('click', cardViewer.presentCards);
 	newLearnButton.dataset.deckid = deck.dataset.id;
-	// newSummary.appendChild(newLearnButton);
 
+	// lastly attach the finaly page to the viewer window
 	cardViewer.appendChild(newSummary);
 };
 
@@ -217,6 +234,8 @@ deckViewer.addDeck = function (deckToBeAdded) {
 		// click one of the buttons to grade your card
 		if (el.classList.contains('testResponseButton')) {
 			newCardTester.scoreCurrentCard(parseInt(el.innerText, 10));
+		} else if (el.classList.contains('testRevealButton')) {
+			newCardTester.revealCurrentCard(parseInt(el.innerText, 10));
 		}
 	};
 
@@ -239,14 +258,10 @@ deckViewer.addDeck = function (deckToBeAdded) {
 		// if any score 1, show them all first before moving on to 2
 		if (newDeck.cardsWithScore(1).length > 0) {
 			currentCard = newDeck.cardsWithScore(1)[0];
-			displayFront.innerHTML = currentCard.front;
-			displayBack.innerHTML = currentCard.back;
 		}
 		// if any score 2, show all before 3s
 		else if (newDeck.cardsWithScore(2).length > 0) {
 			currentCard = newDeck.cardsWithScore(2)[0];
-			displayFront.innerHTML = currentCard.front;
-			displayBack.innerHTML = currentCard.back;
 		} else {
 			// weight scores 3, 4, 5 and five together
 			// default weights are 3 => 10, 4 => 3, 5 => 1, with an option not to show 5s
@@ -292,14 +307,22 @@ deckViewer.addDeck = function (deckToBeAdded) {
 
 			console.log(randomDraw + ' ' + drawScore);
 
+			// show "completed" modal if all cards have score 5
 			if (newDeck.cardsWithScore(5).length == newDeck.cards.length) {
 				modal.classList.remove('hidden');
 			}
 
 			currentCard = newDeck.cardsWithScore(drawScore)[0];
-			displayFront.innerHTML = currentCard.front;
-			displayBack.innerHTML = currentCard.back;
-		}
+
+		}	
+
+		displayFront.innerHTML = currentCard.front;
+		displayBack.innerHTML = currentCard.back;
+
+		newCardTester.querySelector(".testResponseGrades").classList.add("hidden")
+		newCardTester.querySelector(".testRevealButton").classList.remove("hidden")
+		newCardTester.querySelector(".testCardBack").classList.add("hidden")
+		newCardTester.querySelector(".testCardSecret").classList.remove("hidden")		
 	};
 
 	newCardTester.scoreCurrentCard = function (chosenScore) {
@@ -323,6 +346,13 @@ deckViewer.addDeck = function (deckToBeAdded) {
 		// do another
 		newCardTester.showNextCard(newDeck);
 	};
+
+	newCardTester.revealCurrentCard = function () {
+		newCardTester.querySelector(".testResponseGrades").classList.remove("hidden")
+		newCardTester.querySelector(".testRevealButton").classList.add("hidden")
+		newCardTester.querySelector(".testCardBack").classList.remove("hidden")
+		newCardTester.querySelector(".testCardSecret").classList.add("hidden")		
+	}
 
 	// validates structure
 

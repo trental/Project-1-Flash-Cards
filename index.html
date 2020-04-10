@@ -12,11 +12,17 @@
 			VIEWER
 			<div class="cardTester hidden" id="testerTemplate">
 				<div class="testCardFront"></div>
-				<div class="testCardBack"></div>
+				<div class="testCardBack hidden"></div>
+				<div class="testCardSecret"></div>
 				<div class="testResponseContainer">
-					<a class="testResponseButton">1</a><a class="testResponseButton">2</a
-					><a class="testResponseButton">3</a><a class="testResponseButton">4</a
-					><a class="testResponseButton">5</a>
+					<a class="testRevealButton">Show Answer</a>
+					<div class="testResponseGrades hidden">
+						<a class="testResponseButton">1</a>
+						<a class="testResponseButton">2</a>
+						<a class="testResponseButton">3</a>
+						<a class="testResponseButton">4</a>
+						<a class="testResponseButton">5</a>
+					</div>
 				</div>
 			</div>
 			<div class="deckSummary hidden" id="summaryTemplate">
@@ -29,7 +35,7 @@
 				<div data-id="count5" class="summaryCounts">5: 0</div>
 				<div data-id="countTotal" class="summaryCounts">Total: 0</div>
 				<h4>Tags</h4>
-				<div data-id="tags"></div>
+				<div data-id="tags" class="listOfTags"></div>
 				<a class="deck learnButton" data-deckid="0">Learn this deck</a>
 			</div>
 		</section>
