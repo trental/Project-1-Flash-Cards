@@ -16,7 +16,6 @@ let testDeck = [
 class DeckDisplay {
 	constructor() {
 		this.element = document.querySelector('.deckDisplay');
-		this.deckTests = [];
 	}
 
 	hideAll() {
@@ -30,9 +29,6 @@ class DeckDisplay {
 
 	addObject(object) {
 		this.element.appendChild(object);
-		if (object.classList.contains('deckTest')) {
-			this.deckTests.push(object);
-		}
 	}
 }
 
@@ -44,10 +40,6 @@ class DeckBar {
 	addDeck(object) {
 		this.element.appendChild(object);
 	}
-
-	// onKeyup(event) {
-	// 	console.log(event.code);
-	// }
 }
 
 class Deck {
@@ -89,6 +81,20 @@ class Deck {
 	addCard(front, back, score, tags) {
 		const newCard = new Card(front, back, score, tags);
 		this.cards.push(newCard);
+	}
+
+	dumpCards() {
+		let dumpDeck = [];
+		this.cards.forEach((card) =>
+			dumpDeck.push({
+				front: card.front,
+				back: card.back,
+				tags: card.tags,
+				score: card.score,
+			})
+		);
+
+		return dumpDeck;
 	}
 
 	onClickIcon(event) {
@@ -308,6 +314,9 @@ class Deck {
 			this.pushBackCard(this.currentCard, this.cards.length);
 		}
 
+		console.log(this.dumpCards());
+		storedDecks.storeDeck(this.title, this.dumpCards());
+
 		// do another
 		this.showNextCard();
 	}
@@ -361,39 +370,70 @@ modal.addEventListener('click', function (event) {
 
 let decks = [];
 
-decks[0] = new Deck('State Capitals', 0);
-decks[1] = new Deck('Test Deck', 1);
-decks[2] = new Deck('Test2', 2);
+class Storage {
+	constructor(initialDeck) {
+		this.directory = [];
 
+		if (localStorage.getItem('directory') === null) {
+			this.storeDeck(initialDeck[0].tags[0], initialDeck);
+		} else {
+			this.directory = this.getDeck('directory');
+		}
+	}
+
+	getDirectory() {
+		return this.directory;
+	}
+
+	storeDeck(key, value) {
+		if (!this.directory.includes(key)) {
+			this.directory.push(key);
+		}
+
+		if (localStorage) {
+			localStorage.setItem('directory', JSON.stringify(this.directory));
+		} else {
+			$.cookies.set('directory', JSON.stringify(this.directory));
+		}
+
+		if (localStorage) {
+			localStorage.setItem(key, JSON.stringify(value));
+		} else {
+			$.cookies.set(key, JSON.stringify(value));
+		}
+
+		return key;
+	}
+
+	getDeck(key) {
+		if (localStorage) {
+			return JSON.parse(localStorage.getItem(key));
+		} else {
+			return JSON.parse($.cookies.get(key));
+		}
+	}
+}
+
+const storedDecks = new Storage(uscapitals); // pass default deck in case that this is a new run or cleared mem
 const deckBar = new DeckBar();
 const deckDisplay = new DeckDisplay();
+
+decks = [];
+storedDecks.getDirectory().forEach((dir) => {
+	decks.push(new Deck(dir, 0));
+});
+
+decks.forEach((deck) => {
+	storedDecks.getDeck(deck.title).forEach((card) => {
+		deck.addCard(card.front, card.back, card.score, card.tags);
+	});
+	deckBar.addDeck(deck.icon);
+	deckDisplay.addObject(deck.view);
+	deckDisplay.addObject(deck.test);
+});
 
 document.querySelector('body').addEventListener('keyup', (event) => {
 	decks.forEach((deck) => {
 		deck.onKeyup(event);
 	});
 });
-
-uscapitals.forEach((item) =>
-	decks[0].addCard(item.front, item.back, item.score, item.tags)
-);
-uscapitals.forEach((item) =>
-	decks[1].addCard(item.front, item.back, item.score, item.tags)
-);
-testDeck.forEach((item) =>
-	decks[2].addCard(item.front, item.back, item.score, item.tags)
-);
-
-deckBar.addDeck(decks[0].icon);
-deckBar.addDeck(decks[1].icon);
-deckBar.addDeck(decks[2].icon);
-
-deckDisplay.addObject(decks[0].view);
-deckDisplay.addObject(decks[0].test);
-deckDisplay.addObject(decks[1].view);
-deckDisplay.addObject(decks[1].test);
-deckDisplay.addObject(decks[2].view);
-deckDisplay.addObject(decks[2].test);
-
-// deckDisplay.appendChild(deck1.view);
-// deckDisplay.appendChild(deck1.test);
