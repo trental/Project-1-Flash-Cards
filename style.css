@@ -46,6 +46,13 @@ body {
 	margin: 1px auto;
 	border: 2px solid lightgrey;
 }
+.resetButton {
+	background: red;
+	display: block;
+	width: 400px;
+	margin: 1px auto;
+	border: 2px solid lightgrey;
+}
 
 body * {
 	background: lightgrey;

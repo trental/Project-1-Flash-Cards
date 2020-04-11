@@ -97,6 +97,12 @@ class Deck {
 		return dumpDeck;
 	}
 
+	resetCards() {
+		this.cards.forEach((card) => (card.score = 1));
+		storedDecks.storeDeck(this.title, this.dumpCards());
+		this.refreshViewStats();
+	}
+
 	onClickIcon(event) {
 		const el = event.target;
 		deckDisplay.hideAll();
@@ -118,6 +124,8 @@ class Deck {
 			this.viewToggleFront.classList.remove('toggleShowSelected');
 			this.viewToggleBack.classList.add('toggleShowSelected');
 			this.showQuestion = false;
+		} else if (el.classList.contains('resetButton')) {
+			this.resetCards();
 		}
 	}
 
@@ -314,7 +322,7 @@ class Deck {
 			this.pushBackCard(this.currentCard, this.cards.length);
 		}
 
-		console.log(this.dumpCards());
+		// console.log(this.dumpCards());
 		storedDecks.storeDeck(this.title, this.dumpCards());
 
 		// do another
