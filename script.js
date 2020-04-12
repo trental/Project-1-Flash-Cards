@@ -14,8 +14,13 @@ let testDeck = [
 ];
 
 class DeckDisplay {
-	constructor() {
+	constructor(book) {
 		this.element = document.querySelector('.deckDisplay');
+
+		book.decks.forEach((deck) => this.addObject(deck.test));
+		book.decks.forEach((deck) => this.addObject(deck.view));
+
+		// deckDisplay.addObject(deck.test);
 	}
 
 	hideAll() {
@@ -33,8 +38,13 @@ class DeckDisplay {
 }
 
 class DeckBar {
-	constructor() {
+	constructor(book) {
 		this.element = document.querySelector('.deckBar');
+
+		book.decks.forEach((deck) => {
+			console.log(deck.icon);
+			this.addDeck(deck.icon);
+		});
 	}
 
 	addDeck(object) {
@@ -422,28 +432,30 @@ class Storage {
 	}
 }
 
+class Book {
+	constructor(initialDecks) {
+		this.decks = [];
+		this.counter = 0;
+
+		// console.log(initialDecks);
+
+		initialDecks.getDirectory().forEach((dir) => {
+			this.addDeck(dir);
+		});
+	}
+
+	addDeck(newDeck) {
+		this.counter += 1;
+		let tempDeck = new Deck(newDeck, this.counter);
+		this.decks.push(tempDeck);
+
+		storedDecks.getDeck(newDeck).forEach((card) => {
+			tempDeck.addCard(card.front, card.back, card.score, card.tags);
+		});
+	}
+}
+
 const storedDecks = new Storage(uscapitals); // pass default deck in case that this is a new run or cleared mem
-const deckBar = new DeckBar();
-const deckDisplay = new DeckDisplay();
-
-decks = [];
-storedDecks.getDirectory().forEach((dir) => {
-	decks.push(new Deck(dir, 0));
-});
-
-decks.forEach((deck) => {
-	storedDecks.getDeck(deck.title).forEach((card) => {
-		deck.addCard(card.front, card.back, card.score, card.tags);
-	});
-	deckBar.addDeck(deck.icon);
-	deckDisplay.addObject(deck.view);
-	deckDisplay.addObject(deck.test);
-});
-
-document.querySelector('body').addEventListener('keyup', (event) => {
-	decks.forEach((deck) => {
-		deck.onKeyup(event);
-	});
-});
-
-// console.log(JSON.stringify(uspresidents));
+const book = new Book(storedDecks);
+const deckBar = new DeckBar(book);
+const deckDisplay = new DeckDisplay(book);
