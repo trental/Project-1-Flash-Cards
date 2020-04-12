@@ -445,3 +445,5 @@ document.querySelector('body').addEventListener('keyup', (event) => {
 		deck.onKeyup(event);
 	});
 });
+
+// console.log(JSON.stringify(uspresidents));
