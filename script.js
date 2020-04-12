@@ -93,6 +93,7 @@ class Deck {
 		this.edit = editTemplate.cloneNode(true);
 		this.edit.onclick = this.onClickEdit.bind(this);
 		this.edit.id = 'edit' + id;
+		this.edit.querySelector('h1').innerText = title;
 		this.editShuffleButtons = [];
 		for (let i = 1; i <= 5; i++) {
 			this.editShuffleButtons.push([]);
@@ -176,11 +177,7 @@ class Deck {
 	}
 
 	onClickEdit(event) {
-		// do nothing
-
 		if (event.target.classList.contains('toggleShuffle')) {
-			// console.log('playing with shuffle');
-			console.log(event.target);
 			if (event.target.dataset.id == 'edit11') this.shuffle[0] = -1;
 			if (event.target.dataset.id == 'edit12')
 				this.shuffle[0] = event.target.innerText;
@@ -257,15 +254,9 @@ class Deck {
 	}
 
 	refreshEdit() {
-		console.log(this.shuffle);
-		console.log(this.editShuffleButtons);
-		let tempButton;
-
 		for (let i = 0; i <= 4; i++) {
 			for (let j = 0; j <= 2; j++) {
-				// console.log(this.editShuffleButtons[i]);
-				tempButton = this.editShuffleButtons[i][j];
-				tempButton.classList.remove('toggleShowSelected');
+				this.editShuffleButtons[i][j].classList.remove('toggleShowSelected');
 			}
 			if (this.shuffle[i] == -1) {
 				this.editShuffleButtons[i][0].classList.add('toggleShowSelected');
@@ -533,9 +524,19 @@ class Book {
 			tempDeck.addCard(card.front, card.back, card.score, card.tags);
 		});
 	}
+
+	getDecks() {
+		return this.decks;
+	}
 }
 
 const storedDecks = new Storage(uscapitals); // pass default deck in case that this is a new run or cleared mem
 const book = new Book(storedDecks);
 const deckBar = new DeckBar(book);
 const deckDisplay = new DeckDisplay(book);
+
+document.querySelector('body').addEventListener('keyup', (event) => {
+	book.getDecks().forEach((deck) => {
+		deck.onKeyup(event);
+	});
+});
