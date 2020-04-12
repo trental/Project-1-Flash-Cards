@@ -53,18 +53,20 @@ class DeckBar {
 }
 
 class Deck {
-	constructor(title, id) {
-		this.title = title;
-		this.cards = [];
-		this.showQuestion = true;
-		this.shuffle = [-1, -1, 10, 3, 0];
+	// constructor(id, title, shuffle, showQuestion, cards) {
+	constructor(id, newDeck) {
+		console.log(newDeck);
+		this.title = newDeck.detail.title;
+		this.shuffle = newDeck.detail.shuffle;
+		this.showQuestion = newDeck.detail.showQuestion;
+		this.cards = newDeck.cards;
 		this.currentCard = 0;
 
 		// icon that shows in deckBar
 		const iconTemplate = document.querySelector('#iconTemplate');
 		this.icon = iconTemplate.cloneNode(true);
 		this.icon.classList.remove('hidden');
-		this.icon.innerText = title;
+		this.icon.innerText = this.title;
 		this.icon.dataset.id = id;
 		this.icon.id = 'deck' + id;
 		this.icon.onclick = this.onClickIcon.bind(this);
@@ -74,7 +76,7 @@ class Deck {
 		this.view = viewTemplate.cloneNode(true);
 		this.view.onclick = this.onClickView.bind(this);
 		this.view.id = 'view' + id;
-		this.view.querySelector('h1').innerText = title;
+		this.view.querySelector('h1').innerText = this.title;
 		this.viewToggleFront = this.view.querySelector('.toggleFront');
 		this.viewToggleBack = this.view.querySelector('.toggleBack');
 
@@ -93,7 +95,7 @@ class Deck {
 		this.edit = editTemplate.cloneNode(true);
 		this.edit.onclick = this.onClickEdit.bind(this);
 		this.edit.id = 'edit' + id;
-		this.edit.querySelector('h1').innerText = title;
+		this.edit.querySelector('h1').innerText = this.title;
 		this.editShuffleButtons = [];
 		for (let i = 1; i <= 5; i++) {
 			this.editShuffleButtons.push([]);
@@ -107,26 +109,54 @@ class Deck {
 				this.edit.querySelector(`.shuffle0${i}`)
 			);
 		}
+		this.refreshViewStats();
 		this.refreshEdit();
 	}
 
-	addCard(front, back, score, tags) {
-		const newCard = new Card(front, back, score, tags);
+	addCard(front, back, score) {
+		const newCard = new Card(front, back, score);
 		this.cards.push(newCard);
 	}
 
 	dumpCards() {
-		let dumpDeck = [];
-		this.cards.forEach((card) =>
-			dumpDeck.push({
-				front: card.front,
-				back: card.back,
-				tags: card.tags,
-				score: card.score,
-			})
-		);
+		// let dumpDeck = [];
+		// this.cards.forEach((card) =>
+		// 	dumpDeck.push({
+		// 		front: card.front,
+		// 		back: card.back,
+		// 		tags: card.tags,
+		// 		score: card.score,
+		// 	})
+		// );
 
-		return dumpDeck;
+		// return dumpDeck;
+
+		return this.cards;
+	}
+
+	dumpDeck() {
+		let deck = {
+			detail: {
+				title: this.title,
+				shuffle: this.shuffle,
+				showQuestion: this.showQuestion,
+			},
+			cards: this.cards,
+		};
+
+		// let dumpDeck = [];
+		// this.cards.forEach((card) =>
+		// 	dumpDeck.push({
+		// 		front: card.front,
+		// 		back: card.back,
+		// 		tags: card.tags,
+		// 		score: card.score,
+		// 	})
+		// );
+
+		// return dumpDeck;
+
+		return deck;
 	}
 
 	resetCards() {
@@ -152,10 +182,13 @@ class Deck {
 			this.viewToggleFront.classList.add('toggleShowSelected');
 			this.viewToggleBack.classList.remove('toggleShowSelected');
 			this.showQuestion = true;
+			storedDecks.storeDeck(this.title, this.dumpDeck());
 		} else if (el.classList.contains('toggleBack')) {
 			this.viewToggleFront.classList.remove('toggleShowSelected');
 			this.viewToggleBack.classList.add('toggleShowSelected');
 			this.showQuestion = false;
+			console.log(this.dumpDeck());
+			storedDecks.storeDeck(this.title, this.dumpDeck());
 		} else if (el.classList.contains('editButton')) {
 			// this.resetCards();
 			deckDisplay.hideAll();
@@ -216,7 +249,6 @@ class Deck {
 			if (this.getTestButtons() == 'reveal') {
 				this.revealCurrentCard();
 			} else if (['1', '2', '3', '4', '5'].includes(numPressed)) {
-				// console.log(numPressed);
 				this.scoreCurrentCard(parseInt(numPressed, 10));
 			}
 		}
@@ -241,16 +273,25 @@ class Deck {
 			viewCounts[i].innerText = i + 1 + ': ' + count[i];
 		}
 		viewCounts[viewCounts.length - 1].innerText = 'Total: ' + countTotal;
+
+		if (this.showQuestion) {
+			this.viewToggleFront.classList.add('toggleShowSelected');
+			this.viewToggleBack.classList.remove('toggleShowSelected');
+		} else {
+			this.viewToggleFront.classList.remove('toggleShowSelected');
+			this.viewToggleBack.classList.add('toggleShowSelected');
+		}
+
 		// tags
-		let tags = [];
-		this.cards.forEach((card) => {
-			card.tags.forEach((tag) => {
-				if (!tags.includes(tag)) {
-					tags.push(tag);
-				}
-			});
-		});
-		this.view.querySelector('.listOfTags').innerText = tags.join(', ');
+		// let tags = [];
+		// this.cards.forEach((card) => {
+		// 	card.tags.forEach((tag) => {
+		// 		if (!tags.includes(tag)) {
+		// 			tags.push(tag);
+		// 		}
+		// 	});
+		// });
+		// this.view.querySelector('.listOfTags').innerText = tags.join(', ');
 	}
 
 	refreshEdit() {
@@ -319,7 +360,6 @@ class Deck {
 
 	showNextCard() {
 		// algorithm here to determine which card to show
-		// console.table(newDeck.cards);
 		// if any score 1, show them all first before moving on to 2
 		if (this.cardsWithScore(1).length > 0) {
 			this.currentCard = this.cardsWithScore(1)[0];
@@ -386,7 +426,6 @@ class Deck {
 	}
 
 	scoreCurrentCard(chosenScore) {
-		// console.table(currentCard);
 		// update card score
 		this.currentCard.score = chosenScore;
 
@@ -403,8 +442,7 @@ class Deck {
 			this.pushBackCard(this.currentCard, this.cards.length);
 		}
 
-		// console.log(this.dumpCards());
-		storedDecks.storeDeck(this.title, this.dumpCards());
+		storedDecks.storeDeck(this.title, this.dumpDeck());
 
 		// do another
 		this.showNextCard();
@@ -434,11 +472,10 @@ class Deck {
 }
 
 class Card {
-	constructor(front, back, score, tags) {
+	constructor(front, back, score) {
 		this.front = front;
 		this.back = back;
 		this.score = score;
-		this.tags = tags;
 	}
 }
 
@@ -464,7 +501,8 @@ class Storage {
 		this.directory = [];
 
 		if (localStorage.getItem('directory') === null) {
-			this.storeDeck(initialDeck[0].tags[0], initialDeck);
+			// console.log(initialDeck);
+			this.storeDeck(initialDeck.detail.title, initialDeck);
 		} else {
 			this.directory = this.getDeck('directory');
 		}
@@ -508,21 +546,19 @@ class Book {
 		this.decks = [];
 		this.counter = 0;
 
-		// console.log(initialDecks);
-
 		initialDecks.getDirectory().forEach((dir) => {
-			this.addDeck(dir);
+			this.addDeck(storedDecks.getDeck(dir));
 		});
 	}
 
 	addDeck(newDeck) {
 		this.counter += 1;
-		let tempDeck = new Deck(newDeck, this.counter);
+		let tempDeck = new Deck(this.counter, newDeck);
 		this.decks.push(tempDeck);
 
-		storedDecks.getDeck(newDeck).forEach((card) => {
-			tempDeck.addCard(card.front, card.back, card.score, card.tags);
-		});
+		// storedDecks.getDeck(newDeck).forEach((card) => {
+		// 	tempDeck.addCard(card.front, card.back, card.score);
+		// });
 	}
 
 	getDecks() {
@@ -530,7 +566,10 @@ class Book {
 	}
 }
 
+// localStorage.clear();
+
 const storedDecks = new Storage(uscapitals); // pass default deck in case that this is a new run or cleared mem
+console.log(storedDecks);
 const book = new Book(storedDecks);
 const deckBar = new DeckBar(book);
 const deckDisplay = new DeckDisplay(book);
