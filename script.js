@@ -19,6 +19,7 @@ class DeckDisplay {
 
 		book.decks.forEach((deck) => this.addObject(deck.test));
 		book.decks.forEach((deck) => this.addObject(deck.view));
+		book.decks.forEach((deck) => this.addObject(deck.edit));
 
 		// deckDisplay.addObject(deck.test);
 	}
@@ -42,7 +43,6 @@ class DeckBar {
 		this.element = document.querySelector('.deckBar');
 
 		book.decks.forEach((deck) => {
-			console.log(deck.icon);
 			this.addDeck(deck.icon);
 		});
 	}
@@ -57,6 +57,7 @@ class Deck {
 		this.title = title;
 		this.cards = [];
 		this.showQuestion = true;
+		this.shuffle = [-1, -1, 10, 3, 0];
 		this.currentCard = 0;
 
 		// icon that shows in deckBar
@@ -86,6 +87,26 @@ class Deck {
 		this.testFrontSecret = this.test.querySelector('.testCardSecretFront');
 		this.testBack = this.test.querySelector('.testCardBack');
 		this.testBackSecret = this.test.querySelector('.testCardSecretBack');
+
+		// edit div that lets you reset scores or adjusting scoring preferences
+		const editTemplate = document.querySelector('#editTemplate');
+		this.edit = editTemplate.cloneNode(true);
+		this.edit.onclick = this.onClickEdit.bind(this);
+		this.edit.id = 'edit' + id;
+		this.editShuffleButtons = [];
+		for (let i = 1; i <= 5; i++) {
+			this.editShuffleButtons.push([]);
+			this.editShuffleButtons[i - 1].push(
+				this.edit.querySelector(`.shuffle-1${i}`)
+			);
+			this.editShuffleButtons[i - 1].push(
+				this.edit.querySelector(`.shuffleN${i}`)
+			);
+			this.editShuffleButtons[i - 1].push(
+				this.edit.querySelector(`.shuffle0${i}`)
+			);
+		}
+		this.refreshEdit();
 	}
 
 	addCard(front, back, score, tags) {
@@ -134,8 +155,10 @@ class Deck {
 			this.viewToggleFront.classList.remove('toggleShowSelected');
 			this.viewToggleBack.classList.add('toggleShowSelected');
 			this.showQuestion = false;
-		} else if (el.classList.contains('resetButton')) {
-			this.resetCards();
+		} else if (el.classList.contains('editButton')) {
+			// this.resetCards();
+			deckDisplay.hideAll();
+			this.edit.classList.remove('hidden');
 		}
 	}
 
@@ -150,6 +173,42 @@ class Deck {
 		} else if (el.classList.contains('testRevealButton')) {
 			this.revealCurrentCard(parseInt(el.innerText, 10));
 		}
+	}
+
+	onClickEdit(event) {
+		// do nothing
+
+		if (event.target.classList.contains('toggleShuffle')) {
+			// console.log('playing with shuffle');
+			console.log(event.target);
+			if (event.target.dataset.id == 'edit11') this.shuffle[0] = -1;
+			if (event.target.dataset.id == 'edit12')
+				this.shuffle[0] = event.target.innerText;
+			if (event.target.dataset.id == 'edit13') this.shuffle[0] = 0;
+
+			if (event.target.dataset.id == 'edit21') this.shuffle[1] = -1;
+			if (event.target.dataset.id == 'edit22')
+				this.shuffle[1] = event.target.innerText;
+			if (event.target.dataset.id == 'edit23') this.shuffle[1] = 0;
+
+			if (event.target.dataset.id == 'edit31') this.shuffle[2] = -1;
+			if (event.target.dataset.id == 'edit32')
+				this.shuffle[2] = event.target.innerText;
+			if (event.target.dataset.id == 'edit33') this.shuffle[2] = 0;
+
+			if (event.target.dataset.id == 'edit41') this.shuffle[3] = -1;
+			if (event.target.dataset.id == 'edit42')
+				this.shuffle[3] = event.target.innerText;
+			if (event.target.dataset.id == 'edit43') this.shuffle[3] = 0;
+
+			if (event.target.dataset.id == 'edit51') this.shuffle[4] = -1;
+			if (event.target.dataset.id == 'edit52')
+				this.shuffle[4] = event.target.innerText;
+			if (event.target.dataset.id == 'edit53') this.shuffle[4] = 0;
+		} else if (event.target.classList.contains('resetButton')) {
+			this.resetCards();
+		}
+		this.refreshEdit();
 	}
 
 	onKeyup(event) {
@@ -195,6 +254,27 @@ class Deck {
 			});
 		});
 		this.view.querySelector('.listOfTags').innerText = tags.join(', ');
+	}
+
+	refreshEdit() {
+		console.log(this.shuffle);
+		console.log(this.editShuffleButtons);
+		let tempButton;
+
+		for (let i = 0; i <= 4; i++) {
+			for (let j = 0; j <= 2; j++) {
+				// console.log(this.editShuffleButtons[i]);
+				tempButton = this.editShuffleButtons[i][j];
+				tempButton.classList.remove('toggleShowSelected');
+			}
+			if (this.shuffle[i] == -1) {
+				this.editShuffleButtons[i][0].classList.add('toggleShowSelected');
+			} else if (this.shuffle[i] == 0) {
+				this.editShuffleButtons[i][2].classList.add('toggleShowSelected');
+			} else {
+				this.editShuffleButtons[i][1].classList.add('toggleShowSelected');
+			}
+		}
 	}
 
 	setTestButtons(direction = 'reveal') {

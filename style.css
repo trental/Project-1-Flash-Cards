@@ -46,6 +46,13 @@ body {
 	margin: 1px auto;
 	border: 2px solid lightgrey;
 }
+.editButton {
+	background: tan;
+	display: block;
+	width: 400px;
+	margin: 1px auto;
+	border: 2px solid lightgrey;
+}
 .resetButton {
 	background: red;
 	display: block;
@@ -53,7 +60,13 @@ body {
 	margin: 1px auto;
 	border: 2px solid lightgrey;
 }
-
+.alterButton {
+	background: orange;
+	display: block;
+	width: 400px;
+	margin: 1px auto;
+	border: 2px solid lightgrey;
+}
 body * {
 	background: lightgrey;
 	border: 1px solid lightslategrey;
@@ -71,6 +84,13 @@ body * {
 	margin: 10px auto;
 	width: 450px;
 	height: 90%;
+}
+
+.deckEdit {
+	background: blue;
+	margin: 10px auto;
+	width: 450px;
+	height: 600px;
 }
 
 .testCardFront {
@@ -129,8 +149,21 @@ body * {
 	border: 2px solid lightgrey;
 }
 
+.shuffleScore {
+	display: inline-block;
+}
+
+.toggleShuffle {
+	width: 75px;
+	margin: 5px;
+	background: green;
+	display: inline-block;
+	border: 2px solid lightgrey;
+}
+
 .toggleShowSelected {
-	border: 2px solid black;
+	border: 2px solid blue;
+	background: lightblue;
 }
 
 .hidden {

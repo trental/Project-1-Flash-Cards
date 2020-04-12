@@ -31,7 +31,7 @@
 				</div>
 			</div>
 			<div class="deckView hidden" id="viewTemplate">
-				<a class="deck resetButton" data-deckid="0">Reset this deck</a>
+				<a class="deck editButton" data-deckid="0">Edit this deck</a>
 				<h1>Deck Name</h1>
 				<h4>Scoring Summary</h4>
 				<div data-id="count1" class="viewCounts">1: 0</div>
@@ -49,6 +49,59 @@
 					<-><a class="toggleBack toggleDeckShow">Show Back</a>
 				</div>
 				<a class="deck learnButton" data-deckid="0">Learn this deck</a>
+			</div>
+			<div class="deckEdit hidden" id="editTemplate">
+				<h1>Deck Name</h1>
+				<div>
+					<div class="shuffleScore">1</div>
+					<a
+						data-id="edit11"
+						class="toggleShuffle shuffle-11 toggleShowSelected"
+						>&nbsp;</a
+					>
+					<a data-id="edit12" class="toggleShuffle shuffleN1">5</a>
+					<a data-id="edit13" class="toggleShuffle shuffle01">&nbsp;</a>
+				</div>
+				<div>
+					<div class="shuffleScore">2</div>
+					<a
+						data-id="edit21"
+						class="toggleShuffle shuffle-12 toggleShowSelected"
+						>&nbsp;</a
+					>
+					<a data-id="edit22" class="toggleShuffle shuffleN2">5</a>
+					<a data-id="edit23" class="toggleShuffle shuffle02">&nbsp;</a>
+				</div>
+				<div>
+					<div class="shuffleScore">3</div>
+					<a
+						data-id="edit31"
+						class="toggleShuffle shuffle-13 toggleShowSelected"
+						>&nbsp;</a
+					>
+					<a data-id="edit32" class="toggleShuffle shuffleN3">5</a>
+					<a data-id="edit33" class="toggleShuffle shuffle03">&nbsp;</a>
+				</div>
+				<div>
+					<div class="shuffleScore">4</div>
+					<a
+						data-id="edit41"
+						class="toggleShuffle shuffle-14 toggleShowSelected"
+						>&nbsp;</a
+					>
+					<a data-id="edit42" class="toggleShuffle shuffleN4">5</a>
+					<a data-id="edit43" class="toggleShuffle shuffle04">&nbsp;</a>
+				</div>
+				<div>
+					<div class="shuffleScore">5</div>
+					<a data-id="edit51" class="toggleShuffle shuffle-15">&nbsp;</a>
+					<a data-id="edit52" class="toggleShuffle shuffleN5">5</a>
+					<a data-id="edit53" class="toggleShuffle shuffle05 toggleShowSelected"
+						>&nbsp;</a
+					>
+				</div>
+				<a class="deck alterButton" data-deckid="0">Edit individual Cards</a>
+				<a class="deck resetButton" data-deckid="0">Reset scores to 1</a>
 			</div>
 		</section>
 		<div id="modal" class="hidden">
