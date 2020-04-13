@@ -42,6 +42,15 @@ class DeckBar {
 		this.ulButton.addEventListener('change', this.uploadFiles);
 	}
 
+	activateCreateNew() {
+		this.newButton = document.querySelector('.newDeck');
+		console.log(this.newButton);
+		this.newButton.addEventListener('click', () => {
+			console.log(book);
+			book.addDeck(templateDeck);
+		});
+	}
+
 	addDeck(object) {
 		this.element.appendChild(object.icon);
 	}
@@ -272,6 +281,18 @@ class Deck {
 			this.scoreCurrentCard(parseInt(el.innerText, 10));
 		} else if (el.classList.contains('testRevealButton')) {
 			this.revealCurrentCard(parseInt(el.innerText, 10));
+		} else if (el.classList.contains('editTestCard')) {
+			console.log(event.target);
+			console.log(this.cards.indexOf(this.currentCard));
+			console.log(this.currentCard);
+
+			// this.deleteDeck();
+			// return 'deleted';
+			this.alterCard(this.cards.indexOf(this.currentCard));
+			deckDisplay.hideAll();
+			this.refreshAlter();
+			this.alter.classList.remove('hidden');
+			console.log(this.alter);
 		}
 	}
 
@@ -574,61 +595,6 @@ class Deck {
 		this.setTestButtons('score');
 
 		console.table(this.cards);
-
-		// // if any score 1, show them all first before moving on to 2
-		// if (this.cardsWithScore(1).length > 0) {
-		// 	this.currentCard = this.cardsWithScore(1)[0];
-		// }
-		// // if any score 2, show all before 3s
-		// else if (this.cardsWithScore(2).length > 0) {
-		// 	this.currentCard = this.cardsWithScore(2)[0];
-		// } else {
-		// 	// weight scores 3, 4, 5 and five together
-		// 	// default weights are 3 => 10, 4 => 3, 5 => 1, with an option not to show 5s
-		// 	let include3;
-		// 	let include4;
-		// 	let include5;
-		// 	if (this.cardsWithScore(3).length > 0) {
-		// 		include3 = 10;
-		// 	} else {
-		// 		include3 = 0;
-		// 	}
-		// 	if (this.cardsWithScore(4).length > 0) {
-		// 		include4 = 3;
-		// 	} else {
-		// 		include4 = 0;
-		// 	}
-		// 	if (this.cardsWithScore(5).length > 0) {
-		// 		include5 = 1;
-		// 	} else {
-		// 		include5 = 0;
-		// 	}
-		// 	let score3 = include3 / (include3 + include4 + include5);
-		// 	let score4 = include4 / (include3 + include4 + include5);
-		// 	let randomDraw = Math.random();
-		// 	let drawScore;
-		// 	if (randomDraw <= score3 && this.cardsWithScore(3).length > 0) {
-		// 		drawScore = 3;
-		// 	} else if (
-		// 		randomDraw <= score3 + score4 &&
-		// 		this.cardsWithScore(4).length > 0
-		// 	) {
-		// 		drawScore = 4;
-		// 	} else {
-		// 		drawScore = 5;
-		// 	}
-		// 	// show "completed" modal if all cards have score 5
-		// 	if (this.cardsWithScore(5).length == this.cards.length) {
-		// 		modal.classList.remove('hidden');
-		// 		// alert('hi');
-		// 	} else {
-		// 		currentCard = this.cardsWithScore(drawScore)[0];
-		// 	}
-		// }
-		// this.testFront.innerHTML = this.currentCard.front;
-		// this.testBack.innerHTML = this.currentCard.back;
-		// // hide answer and scoring buttons
-		// this.setTestButtons('score');
 	}
 
 	scoreCurrentCard(chosenScore) {
@@ -799,6 +765,15 @@ class Book {
 	}
 }
 
+let templateDeck = {
+	detail: {
+		title: 'New Deck',
+		shuffle: [-1, -1, 5, 5, 0],
+		showQuestion: true,
+	},
+	cards: [],
+};
+
 const deckBar = new DeckBar();
 const deckDisplay = new DeckDisplay();
 
@@ -807,6 +782,8 @@ const deckDisplay = new DeckDisplay();
 const storedDecks = new Storage(uscapitals); // pass default deck in case that this is a new run or cleared mem
 console.log(storedDecks);
 const book = new Book(storedDecks);
+
+deckBar.activateCreateNew();
 
 document.querySelector('body').addEventListener('keyup', (event) => {
 	book.getDecks().forEach((deck) => {
