@@ -238,27 +238,27 @@ class Deck {
 		if (event.target.classList.contains('toggleShuffle')) {
 			if (event.target.dataset.id == 'edit11') this.shuffle[0] = -1;
 			if (event.target.dataset.id == 'edit12')
-				this.shuffle[0] = event.target.innerText;
+				this.shuffle[0] = parseInt(event.target.innerText, 10);
 			if (event.target.dataset.id == 'edit13') this.shuffle[0] = 0;
 
 			if (event.target.dataset.id == 'edit21') this.shuffle[1] = -1;
 			if (event.target.dataset.id == 'edit22')
-				this.shuffle[1] = event.target.innerText;
+				this.shuffle[1] = parseInt(event.target.innerText, 10);
 			if (event.target.dataset.id == 'edit23') this.shuffle[1] = 0;
 
 			if (event.target.dataset.id == 'edit31') this.shuffle[2] = -1;
 			if (event.target.dataset.id == 'edit32')
-				this.shuffle[2] = event.target.innerText;
+				this.shuffle[2] = parseInt(event.target.innerText, 10);
 			if (event.target.dataset.id == 'edit33') this.shuffle[2] = 0;
 
 			if (event.target.dataset.id == 'edit41') this.shuffle[3] = -1;
 			if (event.target.dataset.id == 'edit42')
-				this.shuffle[3] = event.target.innerText;
+				this.shuffle[3] = parseInt(event.target.innerText, 10);
 			if (event.target.dataset.id == 'edit43') this.shuffle[3] = 0;
 
 			if (event.target.dataset.id == 'edit51') this.shuffle[4] = -1;
 			if (event.target.dataset.id == 'edit52')
-				this.shuffle[4] = event.target.innerText;
+				this.shuffle[4] = parseInt(event.target.innerText, 10);
 			if (event.target.dataset.id == 'edit53') this.shuffle[4] = 0;
 		} else if (event.target.classList.contains('resetButton')) {
 			this.resetCards();
@@ -389,69 +389,139 @@ class Deck {
 
 	showNextCard() {
 		// algorithm here to determine which card to show
-		// if any score 1, show them all first before moving on to 2
-		if (this.cardsWithScore(1).length > 0) {
-			this.currentCard = this.cardsWithScore(1)[0];
+
+		let notFound = true;
+		let include = [0, 0, 0, 0, 0];
+		let score = [0, 0, 0, 0, 0];
+		for (let i = 1; i <= 5; i++) {
+			if (
+				this.cardsWithScore(i).length > 0 &&
+				notFound &&
+				this.shuffle[i - 1] == -1
+			) {
+				this.currentCard = this.cardsWithScore(i)[0];
+				notFound = false;
+			}
 		}
-		// if any score 2, show all before 3s
-		else if (this.cardsWithScore(2).length > 0) {
-			this.currentCard = this.cardsWithScore(2)[0];
-		} else {
-			// weight scores 3, 4, 5 and five together
-			// default weights are 3 => 10, 4 => 3, 5 => 1, with an option not to show 5s
 
-			let include3;
-			let include4;
-			let include5;
-
-			if (this.cardsWithScore(3).length > 0) {
-				include3 = 10;
-			} else {
-				include3 = 0;
+		if (notFound) {
+			for (let i = 1; i <= 5; i++) {
+				if (this.cardsWithScore(i).length > 0 && this.shuffle[i - 1] > 0) {
+					include[i - 1] = this.shuffle[i - 1];
+				} else {
+					include[i - 1] = 0;
+				}
 			}
-
-			if (this.cardsWithScore(4).length > 0) {
-				include4 = 3;
-			} else {
-				include4 = 0;
-			}
-
-			if (this.cardsWithScore(5).length > 0) {
-				include5 = 1;
-			} else {
-				include5 = 0;
-			}
-
-			let score3 = include3 / (include3 + include4 + include5);
-			let score4 = include4 / (include3 + include4 + include5);
 			let randomDraw = Math.random();
+			let scoreSum =
+				include[0] + include[1] + include[2] + include[3] + include[4];
 			let drawScore;
 
-			if (randomDraw <= score3 && this.cardsWithScore(3).length > 0) {
-				drawScore = 3;
-			} else if (
-				randomDraw <= score3 + score4 &&
-				this.cardsWithScore(4).length > 0
-			) {
-				drawScore = 4;
-			} else {
-				drawScore = 5;
+			score[0] = include[0] / scoreSum;
+			score[1] = include[1] / scoreSum;
+			score[2] = include[2] / scoreSum;
+			score[3] = include[3] / scoreSum;
+			score[4] = include[4] / scoreSum;
+
+			let runningSum = 0;
+
+			for (let i = 1; i <= 5; i++) {
+				if (this.cardsWithScore(i).length != 0) {
+					runningSum += score[i - 1];
+				}
+				console.log(i + ': ' + this.cardsWithScore(i).length);
+				if (
+					this.cardsWithScore(i).length > 0 &&
+					this.shuffle[i - 1] > 0 &&
+					notFound &&
+					randomDraw < runningSum
+				) {
+					this.currentCard = this.cardsWithScore(i)[0];
+					drawScore = i;
+					notFound = false;
+				}
 			}
 
-			// show "completed" modal if all cards have score 5
-			if (this.cardsWithScore(5).length == this.cards.length) {
-				modal.classList.remove('hidden');
-				// alert('hi');
-			} else {
-				currentCard = this.cardsWithScore(drawScore)[0];
-			}
+			console.log(randomDraw);
+			console.log(drawScore);
 		}
+
+		if (notFound) {
+			modal.classList.remove('hidden');
+			this.currentCard = this.cards[0];
+			this.testFront.innerHTML = this.currentCard.front;
+			this.testBack.innerHTML = this.currentCard.back;
+			// hide answer and scoring buttons
+			this.setTestButtons('score');
+			return 1;
+		}
+
+		console.log(notFound);
+		console.table(include);
+		console.log(include[3]);
+		console.table(score);
 
 		this.testFront.innerHTML = this.currentCard.front;
 		this.testBack.innerHTML = this.currentCard.back;
-
 		// hide answer and scoring buttons
 		this.setTestButtons('score');
+
+		console.table(this.cards);
+
+		// // if any score 1, show them all first before moving on to 2
+		// if (this.cardsWithScore(1).length > 0) {
+		// 	this.currentCard = this.cardsWithScore(1)[0];
+		// }
+		// // if any score 2, show all before 3s
+		// else if (this.cardsWithScore(2).length > 0) {
+		// 	this.currentCard = this.cardsWithScore(2)[0];
+		// } else {
+		// 	// weight scores 3, 4, 5 and five together
+		// 	// default weights are 3 => 10, 4 => 3, 5 => 1, with an option not to show 5s
+		// 	let include3;
+		// 	let include4;
+		// 	let include5;
+		// 	if (this.cardsWithScore(3).length > 0) {
+		// 		include3 = 10;
+		// 	} else {
+		// 		include3 = 0;
+		// 	}
+		// 	if (this.cardsWithScore(4).length > 0) {
+		// 		include4 = 3;
+		// 	} else {
+		// 		include4 = 0;
+		// 	}
+		// 	if (this.cardsWithScore(5).length > 0) {
+		// 		include5 = 1;
+		// 	} else {
+		// 		include5 = 0;
+		// 	}
+		// 	let score3 = include3 / (include3 + include4 + include5);
+		// 	let score4 = include4 / (include3 + include4 + include5);
+		// 	let randomDraw = Math.random();
+		// 	let drawScore;
+		// 	if (randomDraw <= score3 && this.cardsWithScore(3).length > 0) {
+		// 		drawScore = 3;
+		// 	} else if (
+		// 		randomDraw <= score3 + score4 &&
+		// 		this.cardsWithScore(4).length > 0
+		// 	) {
+		// 		drawScore = 4;
+		// 	} else {
+		// 		drawScore = 5;
+		// 	}
+		// 	// show "completed" modal if all cards have score 5
+		// 	if (this.cardsWithScore(5).length == this.cards.length) {
+		// 		modal.classList.remove('hidden');
+		// 		// alert('hi');
+		// 	} else {
+		// 		currentCard = this.cardsWithScore(drawScore)[0];
+		// 	}
+		// }
+		// this.testFront.innerHTML = this.currentCard.front;
+		// this.testBack.innerHTML = this.currentCard.back;
+		// // hide answer and scoring buttons
+		// this.setTestButtons('score');
 	}
 
 	scoreCurrentCard(chosenScore) {
