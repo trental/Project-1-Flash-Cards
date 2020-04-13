@@ -60,6 +60,16 @@ body {
 	margin: 1px auto;
 	border: 2px solid lightgrey;
 }
+
+.deleteButton {
+	background: black;
+	color: red;
+	display: block;
+	width: 400px;
+	margin: 1px auto;
+	border: 2px solid red;
+}
+
 .alterButton {
 	background: orange;
 	display: block;

@@ -213,7 +213,6 @@ class Deck {
 			this.viewToggleFront.classList.remove('toggleShowSelected');
 			this.viewToggleBack.classList.add('toggleShowSelected');
 			this.showQuestion = false;
-			console.log(this.dumpDeck());
 			storedDecks.storeDeck(this.title, this.dumpDeck());
 		} else if (el.classList.contains('editButton')) {
 			// this.resetCards();
@@ -263,10 +262,23 @@ class Deck {
 			if (event.target.dataset.id == 'edit53') this.shuffle[4] = 0;
 		} else if (event.target.classList.contains('resetButton')) {
 			this.resetCards();
+		} else if (event.target.classList.contains('deleteButton')) {
+			this.deleteDeck();
+			return 'deleted';
 		}
+
+		console.log(event.target);
 
 		this.refreshEdit();
 		storedDecks.storeDeck(this.title, this.dumpDeck());
+	}
+
+	deleteDeck() {
+		this.icon.classList.add('hidden');
+		this.view.classList.add('hidden');
+		this.edit.classList.add('hidden');
+		this.test.classList.add('hidden');
+		storedDecks.deleteDeck(this.title);
 	}
 
 	onKeyup(event) {
@@ -531,7 +543,6 @@ class Storage {
 	}
 
 	storeDeck(key, value) {
-		console.log(value);
 		if (!this.directory.includes(key)) {
 			this.directory.push(key);
 		}
@@ -556,6 +567,32 @@ class Storage {
 			return JSON.parse(localStorage.getItem(key));
 		} else {
 			return JSON.parse($.cookies.get(key));
+		}
+	}
+
+	deleteDeck(key) {
+		console.log(this);
+		for (let i = 0; i < this.directory.length; i++) {
+			if (key === this.directory[i]) {
+				this.directory.splice(i, 1);
+				console.log('removing');
+				i = this.directory.length + 1;
+			}
+		}
+
+		console.log(this.directory);
+
+		if (localStorage) {
+			localStorage.setItem('directory', JSON.stringify(this.directory));
+		} else {
+			$.cookies.set('directory', JSON.stringify(this.directory));
+		}
+
+		console.log(key);
+		if (localStorage) {
+			localStorage.removeItem(key);
+		} else {
+			$.cookies.remove(key);
 		}
 	}
 }
