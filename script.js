@@ -16,12 +16,6 @@ let testDeck = [
 class DeckDisplay {
 	constructor(book) {
 		this.element = document.querySelector('.deckDisplay');
-
-		book.decks.forEach((deck) => this.addObject(deck.test));
-		book.decks.forEach((deck) => this.addObject(deck.view));
-		book.decks.forEach((deck) => this.addObject(deck.edit));
-
-		// deckDisplay.addObject(deck.test);
 	}
 
 	hideAll() {
@@ -33,27 +27,53 @@ class DeckDisplay {
 		}
 	}
 
-	addObject(object) {
-		this.element.appendChild(object);
+	addDeck(object) {
+		this.element.appendChild(object.test);
+		this.element.appendChild(object.view);
+		this.element.appendChild(object.edit);
 	}
 }
 
 class DeckBar {
 	constructor(book) {
 		this.element = document.querySelector('.deckBar');
-
-		book.decks.forEach((deck) => {
-			this.addDeck(deck.icon);
-		});
+		this.ulButton = document.querySelector('#upload');
+		this.ulButton.addEventListener('change', this.uploadFiles);
 	}
 
 	addDeck(object) {
-		this.element.appendChild(object);
+		this.element.appendChild(object.icon);
+	}
+
+	uploadFiles(ulButtonEvent) {
+		let files = ulButtonEvent.target.files;
+
+		for (let i = 0; i < files.length; i++) {
+			console.log(files[i]);
+			readFile(files[i]);
+		}
+
+		ulButtonEvent.target.value = '';
+
+		function readFile(file) {
+			let reader = new FileReader();
+
+			reader.readAsText(file);
+
+			reader.onload = function () {
+				let output = JSON.parse(reader.result);
+				console.log(book);
+				book.addDeck(output);
+			};
+
+			reader.onerror = function () {
+				console.log(reader.error);
+			};
+		}
 	}
 }
 
 class Deck {
-	// constructor(id, title, shuffle, showQuestion, cards) {
 	constructor(id, newDeck) {
 		console.log(newDeck);
 		this.title = newDeck.detail.title;
@@ -65,11 +85,17 @@ class Deck {
 		// icon that shows in deckBar
 		const iconTemplate = document.querySelector('#iconTemplate');
 		this.icon = iconTemplate.cloneNode(true);
+		this.icon.onclick = this.onClickIcon.bind(this);
+
+		const newImage = document.createElement('img');
 		this.icon.classList.remove('hidden');
 		this.icon.innerText = this.title;
 		this.icon.dataset.id = id;
 		this.icon.id = 'deck' + id;
-		this.icon.onclick = this.onClickIcon.bind(this);
+		newImage.setAttribute('src', 'images/downArrow.png');
+		newImage.setAttribute('width', 10);
+		newImage.classList.add('download');
+		this.icon.appendChild(newImage);
 
 		// view div that shows in deckDisplay
 		const viewTemplate = document.querySelector('#viewTemplate');
@@ -111,6 +137,7 @@ class Deck {
 		}
 		this.refreshViewStats();
 		this.refreshEdit();
+		storedDecks.storeDeck(this.title, this.dumpDeck());
 	}
 
 	addCard(front, back, score) {
@@ -119,18 +146,6 @@ class Deck {
 	}
 
 	dumpCards() {
-		// let dumpDeck = [];
-		// this.cards.forEach((card) =>
-		// 	dumpDeck.push({
-		// 		front: card.front,
-		// 		back: card.back,
-		// 		tags: card.tags,
-		// 		score: card.score,
-		// 	})
-		// );
-
-		// return dumpDeck;
-
 		return this.cards;
 	}
 
@@ -144,18 +159,6 @@ class Deck {
 			cards: this.cards,
 		};
 
-		// let dumpDeck = [];
-		// this.cards.forEach((card) =>
-		// 	dumpDeck.push({
-		// 		front: card.front,
-		// 		back: card.back,
-		// 		tags: card.tags,
-		// 		score: card.score,
-		// 	})
-		// );
-
-		// return dumpDeck;
-
 		return deck;
 	}
 
@@ -165,11 +168,34 @@ class Deck {
 		this.refreshViewStats();
 	}
 
+	downloadFile() {
+		function SaveAsFile(t, f, m) {
+			try {
+				var b = new Blob([t], { type: m });
+				saveAs(b, f);
+			} catch (e) {
+				window.open('data:' + m + ',' + encodeURIComponent(t), '_blank', '');
+			}
+		}
+
+		SaveAsFile(
+			JSON.stringify(this.dumpDeck()),
+			this.title + '.json',
+			'text/plain;charset=utf-8'
+		);
+	}
+
 	onClickIcon(event) {
-		const el = event.target;
-		deckDisplay.hideAll();
-		this.refreshViewStats();
-		this.view.classList.remove('hidden');
+		if (event.target.classList.contains('download')) {
+			console.log('download');
+			this.downloadFile();
+		} else {
+			const el = event.target;
+			console.log(event.target);
+			deckDisplay.hideAll();
+			this.refreshViewStats();
+			this.view.classList.remove('hidden');
+		}
 	}
 
 	onClickView(event) {
@@ -238,7 +264,9 @@ class Deck {
 		} else if (event.target.classList.contains('resetButton')) {
 			this.resetCards();
 		}
+
 		this.refreshEdit();
+		storedDecks.storeDeck(this.title, this.dumpDeck());
 	}
 
 	onKeyup(event) {
@@ -281,17 +309,6 @@ class Deck {
 			this.viewToggleFront.classList.remove('toggleShowSelected');
 			this.viewToggleBack.classList.add('toggleShowSelected');
 		}
-
-		// tags
-		// let tags = [];
-		// this.cards.forEach((card) => {
-		// 	card.tags.forEach((tag) => {
-		// 		if (!tags.includes(tag)) {
-		// 			tags.push(tag);
-		// 		}
-		// 	});
-		// });
-		// this.view.querySelector('.listOfTags').innerText = tags.join(', ');
 	}
 
 	refreshEdit() {
@@ -443,6 +460,7 @@ class Deck {
 		}
 
 		storedDecks.storeDeck(this.title, this.dumpDeck());
+		// console.log(this.dumpDeck());
 
 		// do another
 		this.showNextCard();
@@ -513,6 +531,7 @@ class Storage {
 	}
 
 	storeDeck(key, value) {
+		console.log(value);
 		if (!this.directory.includes(key)) {
 			this.directory.push(key);
 		}
@@ -552,13 +571,13 @@ class Book {
 	}
 
 	addDeck(newDeck) {
+		console.log(this);
 		this.counter += 1;
 		let tempDeck = new Deck(this.counter, newDeck);
 		this.decks.push(tempDeck);
 
-		// storedDecks.getDeck(newDeck).forEach((card) => {
-		// 	tempDeck.addCard(card.front, card.back, card.score);
-		// });
+		deckBar.addDeck(tempDeck);
+		deckDisplay.addDeck(tempDeck);
 	}
 
 	getDecks() {
@@ -566,13 +585,14 @@ class Book {
 	}
 }
 
+const deckBar = new DeckBar();
+const deckDisplay = new DeckDisplay();
+
 // localStorage.clear();
 
 const storedDecks = new Storage(uscapitals); // pass default deck in case that this is a new run or cleared mem
 console.log(storedDecks);
 const book = new Book(storedDecks);
-const deckBar = new DeckBar(book);
-const deckDisplay = new DeckDisplay(book);
 
 document.querySelector('body').addEventListener('keyup', (event) => {
 	book.getDecks().forEach((deck) => {

@@ -1,0 +1,14 @@
+{
+	"detail": {
+		"title": "US Presidents",
+		"shuffle": [-1, -1, 5, 5, 0],
+		"showQuestion": true
+	},
+	"cards": [
+		{
+			"front": "1: 1789-1797",
+			"back": "George Washington",
+			"score": 1
+		}
+	]
+}
