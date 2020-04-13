@@ -102,6 +102,32 @@ body * {
 	width: 450px;
 	height: 600px;
 }
+.deckAlter {
+	background: black;
+	margin: 10px auto;
+	width: 920px;
+	height: 600px;
+}
+.alterCard {
+	background: black;
+	margin: 10px auto;
+	width: 450px;
+	height: 550px;
+	display: inline-block;
+}
+.alterList {
+	background: black;
+	margin: 10px auto;
+	width: 450px;
+	height: 550px;
+	display: inline-block;
+}
+#scrollbox {
+	overflow: scroll;
+	font-size: 20px;
+	width: 400px;
+	height: 500px;
+}
 
 .testCardFront {
 	background: white;
@@ -115,6 +141,24 @@ body * {
 	margin: 10px auto;
 	width: 90%;
 	height: 40%;
+}
+
+.alterCardFront {
+	background: white;
+	margin: 10px auto;
+	width: 90%;
+	height: 40%;
+	font-size: 20px;
+	text-align: center;
+}
+
+.alterCardBack {
+	background: white;
+	margin: 10px auto;
+	width: 90%;
+	height: 40%;
+	font-size: 20px;
+	text-align: center;
 }
 
 .testCardSecretFront {

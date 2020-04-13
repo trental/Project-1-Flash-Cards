@@ -31,6 +31,7 @@ class DeckDisplay {
 		this.element.appendChild(object.test);
 		this.element.appendChild(object.view);
 		this.element.appendChild(object.edit);
+		this.element.appendChild(object.alter);
 	}
 }
 
@@ -137,7 +138,32 @@ class Deck {
 		}
 		this.refreshViewStats();
 		this.refreshEdit();
+
+		// alter div that lets you edit or add cards
+		const alterTemplate = document.querySelector('#alterTemplate');
+		this.alter = alterTemplate.cloneNode(true);
+		this.alter.onclick = this.onClickAlter.bind(this);
+		this.alter.id = 'alter' + id;
+		this.alterScrollBox = this.alter.querySelector('#scrollbox');
+		this.refreshAlter();
+
 		storedDecks.storeDeck(this.title, this.dumpDeck());
+	}
+
+	refreshAlter() {
+		let firstChild = this.alterScrollBox.firstElementChild;
+		while (firstChild) {
+			firstChild.remove();
+			firstChild = this.alterScrollBox.firstElementChild;
+		}
+
+		let newCardDiv;
+		for (let i = 0; i < this.cards.length; i++) {
+			newCardDiv = document.createElement('div');
+			newCardDiv.innerText = this.cards[i].front;
+			newCardDiv.dataset.deckid = i;
+			this.alterScrollBox.appendChild(newCardDiv);
+		}
 	}
 
 	addCard(front, back, score) {
@@ -265,12 +291,28 @@ class Deck {
 		} else if (event.target.classList.contains('deleteButton')) {
 			this.deleteDeck();
 			return 'deleted';
+		} else if (event.target.classList.contains('alterButton')) {
+			// this.deleteDeck();
+			// return 'deleted';
+			deckDisplay.hideAll();
+			this.refreshAlter();
+			this.alter.classList.remove('hidden');
+			console.log(this.alter);
 		}
-
-		console.log(event.target);
 
 		this.refreshEdit();
 		storedDecks.storeDeck(this.title, this.dumpDeck());
+	}
+
+	onClickAlter(event) {
+		console.log(event.target);
+	}
+
+	alterCard(cardId) {
+		let alterFront = this.alter.querySelector('.alterCardFront');
+		let alterBack = this.alter.querySelector('.alterCardBack');
+
+		
 	}
 
 	deleteDeck() {
