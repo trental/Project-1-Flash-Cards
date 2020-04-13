@@ -110,16 +110,17 @@
 				<a class="deck deleteButton" data-deckid="0">Delete this Deck</a>
 			</div>
 			<div class="deckAlter hidden" id="alterTemplate">
-				<div class="alterCard">
+				<div class="alterCard" data-currentcard=-1>
+					<a class="newButton" >Enter New Card</a>
 					<input class="alterCardFront" type="text" tabindex=1></input>
 					<input class="alterCardBack" type="text" tabindex=2></input>
 					<div class="alterResponseContainer">
 						<div class="testResponseGrades">
-							<a class="testResponseButton">1</a>
-							<a class="testResponseButton">2</a>
-							<a class="testResponseButton">3</a>
-							<a class="testResponseButton">4</a>
-							<a class="testResponseButton">5</a>
+							<a class="alterScoreButton">1</a>
+							<a class="alterScoreButton">2</a>
+							<a class="alterScoreButton">3</a>
+							<a class="alterScoreButton">4</a>
+							<a class="alterScoreButton">5</a>
 						</div>
 					</div>
 				</div>

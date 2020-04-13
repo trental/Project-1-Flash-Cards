@@ -187,11 +187,27 @@ body * {
 	display: inline-block;
 }
 
+.alterScoreButton {
+	width: 50px;
+	margin: 5px;
+	color: white;
+	background: blue;
+	display: inline-block;
+}
+
 .testRevealButton {
 	width: 250px;
 	margin: 5px;
 	color: white;
 	background: blue;
+	display: inline-block;
+}
+
+.newButton {
+	width: 250px;
+	margin: 5px;
+	color: white;
+	background: orange;
 	display: inline-block;
 }
 

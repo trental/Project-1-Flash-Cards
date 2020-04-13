@@ -145,6 +145,9 @@ class Deck {
 		this.alter.onclick = this.onClickAlter.bind(this);
 		this.alter.id = 'alter' + id;
 		this.alterScrollBox = this.alter.querySelector('#scrollbox');
+		this.alterCardDetail = this.alter.querySelector('.alterCard');
+		this.alterFront = this.alter.querySelector('.alterCardFront');
+		this.alterBack = this.alter.querySelector('.alterCardBack');
 		this.refreshAlter();
 
 		storedDecks.storeDeck(this.title, this.dumpDeck());
@@ -158,10 +161,21 @@ class Deck {
 		}
 
 		let newCardDiv;
+		let delImage;
 		for (let i = 0; i < this.cards.length; i++) {
 			newCardDiv = document.createElement('div');
 			newCardDiv.innerText = this.cards[i].front;
 			newCardDiv.dataset.deckid = i;
+			newCardDiv.classList.add('scrollCard');
+			delImage = document.createElement('img');
+			delImage.setAttribute('src', 'images/delete.png');
+			delImage.dataset.deckid = i;
+			delImage.style.width = '10px';
+			delImage.style.border = '0';
+			delImage.align = 'right';
+			delImage.style.margin = '5px';
+			delImage.classList.add('deleteCard');
+			newCardDiv.appendChild(delImage);
 			this.alterScrollBox.appendChild(newCardDiv);
 		}
 	}
@@ -169,6 +183,7 @@ class Deck {
 	addCard(front, back, score) {
 		const newCard = new Card(front, back, score);
 		this.cards.push(newCard);
+		storedDecks.storeDeck(this.title, this.dumpDeck());
 	}
 
 	dumpCards() {
@@ -305,14 +320,63 @@ class Deck {
 	}
 
 	onClickAlter(event) {
+		// console.log(event.target.classList.contains('scrollCard'));
+		if (event.target.classList.contains('scrollCard')) {
+			this.alterCard(event.target.dataset.deckid);
+		} else if (event.target.classList.contains('alterScoreButton')) {
+			console.log(this.alterCardDetail);
+			if (parseInt(this.alterCardDetail.dataset.currentcard, 10) != -1) {
+				this.saveCard(
+					parseInt(this.alterCardDetail.dataset.currentcard, 10),
+					this.alterFront.value,
+					this.alterBack.value,
+					parseInt(event.target.innerText, 10)
+				);
+				this.refreshAlter();
+				console.table(this.cards);
+			} else {
+				this.addCard(
+					this.alterFront.value,
+					this.alterBack.value,
+					parseInt(event.target.innerText, 10)
+				);
+				this.refreshAlter();
+			}
+			this.startNewCard();
+		} else if (event.target.classList.contains('newButton')) {
+			this.startNewCard();
+			this.refreshAlter();
+		} else if (event.target.classList.contains('deleteCard')) {
+			this.deleteCard(event.target.dataset.deckid);
+			this.refreshAlter();
+			this.startNewCard();
+		}
 		console.log(event.target);
 	}
 
-	alterCard(cardId) {
-		let alterFront = this.alter.querySelector('.alterCardFront');
-		let alterBack = this.alter.querySelector('.alterCardBack');
+	deleteCard(cardId) {
+		this.cards.splice(cardId, 1);
+		this.refreshAlter();
+		storedDecks.storeDeck(this.title, this.dumpDeck());
+	}
 
-		
+	startNewCard() {
+		this.alterCardDetail.dataset.currentcard = -1;
+		this.alterFront.value = '';
+		this.alterBack.value = '';
+	}
+
+	saveCard(cardId, front, back, score) {
+		this.cards[cardId].front = front;
+		this.cards[cardId].back = back;
+		this.cards[cardId].score = score;
+		storedDecks.storeDeck(this.title, this.dumpDeck());
+	}
+
+	alterCard(cardId) {
+		this.alterCardDetail.dataset.currentcard = cardId;
+		this.alterFront.value = this.cards[cardId].front;
+		this.alterBack.value = this.cards[cardId].back;
 	}
 
 	deleteDeck() {
@@ -320,6 +384,7 @@ class Deck {
 		this.view.classList.add('hidden');
 		this.edit.classList.add('hidden');
 		this.test.classList.add('hidden');
+		this.alter.classList.add('hidden');
 		storedDecks.deleteDeck(this.title);
 	}
 
