@@ -88,7 +88,7 @@ class Deck {
 		this.view = viewTemplate.cloneNode(true);
 		this.view.onclick = this.onClickView.bind(this);
 		this.view.id = 'view' + id;
-		this.view.querySelector('h2').innerText = this.title;
+		this.view.querySelector('h3').innerText = this.title;
 		this.viewToggleFront = this.view.querySelector('.toggleFront');
 		this.viewToggleBack = this.view.querySelector('.toggleBack');
 
@@ -161,6 +161,7 @@ class Deck {
 			newCardDiv.innerText = this.cards[i].front;
 			newCardDiv.dataset.deckid = i;
 			newCardDiv.classList.add('scrollCard');
+			newCardDiv.classList.add('button');
 			delImage = document.createElement('img');
 			delImage.setAttribute('src', 'images/delete.png');
 			delImage.dataset.deckid = i;
@@ -225,12 +226,16 @@ class Deck {
 			this.downloadFile();
 		} else {
 			[...deckBar.element.querySelectorAll('.deckIcon')].forEach((icon) => {
-				console.log(icon);
+				icon.classList.remove('toggleShowSelected');
+			});
+			[...deckBar.element.querySelectorAll('.deckText')].forEach((icon) => {
 				icon.classList.remove('toggleShowSelected');
 			});
 			const el = event.target;
 			el.classList.add('toggleShowSelected');
-			// console.log(el);
+			if (el.classList.contains('deckText')) {
+				el.parentElement.classList.add('toggleShowSelected');
+			}
 			deckDisplay.hideAll();
 			this.refreshViewStats();
 			this.view.classList.remove('hidden');
@@ -310,8 +315,6 @@ class Deck {
 			this.deleteDeck();
 			return 'deleted';
 		} else if (event.target.classList.contains('alterButton')) {
-			// this.deleteDeck();
-			// return 'deleted';
 			deckDisplay.hideAll();
 			this.refreshAlter();
 			this.alter.classList.remove('hidden');
@@ -345,6 +348,10 @@ class Deck {
 	onClickAlter(event) {
 		if (event.target.classList.contains('scrollCard')) {
 			this.alterCard(event.target.dataset.deckid);
+			[...this.alter.querySelectorAll('.scrollCard')].forEach((card) =>
+				card.classList.remove('toggleShowSelected')
+			);
+			event.target.classList.add('toggleShowSelected');
 		} else if (event.target.classList.contains('alterScoreButton')) {
 			if (parseInt(this.alterCardDetail.dataset.currentcard, 10) != -1) {
 				this.saveCard(
@@ -593,8 +600,6 @@ class Deck {
 		this.testBack.innerHTML = this.currentCard.back;
 		// hide answer and scoring buttons
 		this.setTestButtons('score');
-
-		console.table(this.cards);
 	}
 
 	scoreCurrentCard(chosenScore) {
