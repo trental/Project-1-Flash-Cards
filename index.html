@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<meta charset="utf-8" />
 		<title>First Mockup</title>
@@ -7,19 +7,29 @@
 	</head>
 
 	<body class="">
-		<header class="header">HEADER</header>
+		<header class="header"><h1>Flashcards</h1></header>
 		<section class="deckBar">
-			DECKS
-			<a class="deckIcon hidden" id="iconTemplate"
-				>Template <img src="images/downArrow.png" width="10"
-			/></a>
+			<h2>DECKS</h2>
 			<input id="upload" type="file" multiple="multiple" />
 			<a class="newDeck">Create New</a>
+			<div class="deckIcon hidden" id="iconTemplate">
+				<a>Template</a>
+				<img
+					src="images/downArrow.png"
+					class="download"
+					width="10"
+					alt="Download Deck"
+				/>
+			</div>
 		</section>
 		<section class="deckDisplay">
-			VIEWER
 			<div class="deckTest hidden" id="testTemplate">
-				<img src="images/editPencil.png" class="editTestCard" width="15px" align="right" />
+				<img
+					src="images/editPencil.png"
+					class="editTestCard"
+					width="15"
+					alt="Edit this Flashcard"
+				/>
 				<div class="testCardFront"></div>
 				<div class="testCardSecretFront"></div>
 				<div class="testCardBack"></div>
@@ -37,7 +47,7 @@
 			</div>
 			<div class="deckView hidden" id="viewTemplate">
 				<a class="deck editButton" data-deckid="0">Edit this deck</a>
-				<h1>Deck Name</h1>
+				<h2>Deck Name</h2>
 				<h4>Scoring Summary</h4>
 				<div data-id="count1" class="viewCounts">1: 0</div>
 				<div data-id="count2" class="viewCounts">2: 0</div>
@@ -48,17 +58,20 @@
 				<h4>Tags</h4>
 				<div data-id="tags" class="listOfTags"></div>
 				<div>
-					<a class="toggleFront toggleDeckShow toggleShowSelected"
-						>Show Front</a
-					>
-					<-><a class="toggleBack toggleDeckShow">Show Back</a>
+					<a class="toggleFront toggleDeckShow toggleShowSelected">Show Front</a
+					>&lt;-&gt;<a class="toggleBack toggleDeckShow">Show Back</a>
 				</div>
 				<a class="deck learnButton" data-deckid="0">Learn this deck</a>
 			</div>
 			<div class="deckEdit hidden" id="editTemplate">
-				<img src="images/editPencil.png" class="editDeckName" width="15px" align="right" />
-				<h1 class="deckName">Deck Name</h1>
-				<input class="inputDeckName hidden" value="Deck Name">
+				<img
+					src="images/editPencil.png"
+					class="editDeckName actionIcon"
+					width="15"
+					alt="Edit Deck Title"
+				/>
+				<h2 class="deckName">Deck Name</h2>
+				<input class="inputDeckName hidden" value="Deck Name" />
 
 				<div>
 					<div class="shuffleScore">1</div>
@@ -115,10 +128,10 @@
 				<a class="deck deleteButton" data-deckid="0">Delete this Deck</a>
 			</div>
 			<div class="deckAlter hidden" id="alterTemplate">
-				<div class="alterCard" data-currentcard=-1>
-					<a class="newButton" >Enter New Card</a>
-					<input class="alterCardFront" type="text" tabindex=1></input>
-					<input class="alterCardBack" type="text" tabindex=2></input>
+				<div class="alterCard" data-currentcard="-1">
+					<a class="newButton">Enter New Card</a>
+					<input class="alterCardFront" type="text" tabindex="1" />
+					<input class="alterCardBack" type="text" tabindex="2" />
 					<div class="alterResponseContainer">
 						<div class="testResponseGrades">
 							<a class="alterScoreButton">1</a>
@@ -129,37 +142,13 @@
 						</div>
 					</div>
 				</div>
-				<div class="alterList"><div id="scrollbox">
-
-				</div></div>
-			</div>
-				
-			</div>
-			<div class="deckView hidden" id="viewTemplate">
-				<a class="deck editButton" data-deckid="0">Edit this deck</a>
-				<h1>Deck Name</h1>
-				<h4>Scoring Summary</h4>
-				<div data-id="count1" class="viewCounts">1: 0</div>
-				<div data-id="count2" class="viewCounts">2: 0</div>
-				<div data-id="count3" class="viewCounts">3: 0</div>
-				<div data-id="count4" class="viewCounts">4: 0</div>
-				<div data-id="count5" class="viewCounts">5: 0</div>
-				<div data-id="countTotal" class="viewCounts">Total: 0</div>
-				<h4>Tags</h4>
-				<div data-id="tags" class="listOfTags"></div>
-				<div>
-					<a class="toggleFront toggleDeckShow toggleShowSelected"
-						>Show Front</a
-					>
-					<-><a class="toggleBack toggleDeckShow">Show Back</a>
-				</div>
-				<a class="deck learnButton" data-deckid="0">Learn this deck</a>
+				<div class="alterList"><div id="scrollbox"></div></div>
 			</div>
 		</section>
 		<div id="modal" class="hidden">
 			<div id="modal-textbox">
 				<a id="close" href="#">Close</a>
-				<h1>You Did It!</h1>
+				<h2>You Did It!</h2>
 				<p>
 					You memorized all of the cards! Try learning another set of cards.
 				</p>

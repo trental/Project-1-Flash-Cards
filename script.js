@@ -99,20 +99,16 @@ class Deck {
 
 		const newImage = document.createElement('img');
 		this.icon.classList.remove('hidden');
-		this.icon.innerText = this.title;
+		this.icon.querySelector('a').innerText = this.title;
 		this.icon.dataset.id = id;
 		this.icon.id = 'deck' + id;
-		newImage.setAttribute('src', 'images/downArrow.png');
-		newImage.setAttribute('width', 10);
-		newImage.classList.add('download');
-		this.icon.appendChild(newImage);
 
 		// view div that shows in deckDisplay
 		const viewTemplate = document.querySelector('#viewTemplate');
 		this.view = viewTemplate.cloneNode(true);
 		this.view.onclick = this.onClickView.bind(this);
 		this.view.id = 'view' + id;
-		this.view.querySelector('h1').innerText = this.title;
+		this.view.querySelector('h2').innerText = this.title;
 		this.viewToggleFront = this.view.querySelector('.toggleFront');
 		this.viewToggleBack = this.view.querySelector('.toggleBack');
 
@@ -169,7 +165,7 @@ class Deck {
 	}
 
 	refreshIcon() {
-		this.icon.innerText = this.title;
+		this.icon.querySelector('a').innerText = this.title;
 	}
 
 	refreshAlter() {
