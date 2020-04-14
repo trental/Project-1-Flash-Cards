@@ -11,26 +11,26 @@ In addition to being a project of personal interest, this web app fulfills the f
 
 ## Structure
 
-This web app works by through the use of Decks, which are collections of Cards.
+This web app works through the use of Decks, which are collections of Cards.
 
 Each Deck has a title and card presentation options.
 Each card has a front, back and score.
 
 ## Features
 
-### Deck Storage
+**Deck Storage**
 
 - Download (json format)
 - Upload (json format)
 - Persistence in Browser memory using `localStorage`
 
-### Deck Entry / Edit
+**Deck Entry / Edit**
 
 - Add New Deck
 - Add New Cards
 - Modify Existing Cards
 
-### Card Presentation and Scoring
+**Card Presentation and Scoring**
 
 - Card scoring tiers from 1 (unknown) to 5 (immediate recall)
 - Adaptive presentation based on score, customizable by Deck
