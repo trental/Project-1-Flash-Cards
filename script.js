@@ -131,7 +131,13 @@ class Deck {
 		this.edit = editTemplate.cloneNode(true);
 		this.edit.onclick = this.onClickEdit.bind(this);
 		this.edit.id = 'edit' + id;
-		this.edit.querySelector('h1').innerText = this.title;
+
+		this.idn = this.edit.querySelector('.inputDeckName');
+		this.dn = this.edit.querySelector('.deckName');
+
+		this.dn.innerText = this.title;
+		this.idn.value = this.title;
+		console.log(this.idn.value);
 		this.editShuffleButtons = [];
 		for (let i = 1; i <= 5; i++) {
 			this.editShuffleButtons.push([]);
@@ -160,6 +166,10 @@ class Deck {
 		this.refreshAlter();
 
 		storedDecks.storeDeck(this.title, this.dumpDeck());
+	}
+
+	refreshIcon() {
+		this.icon.innerText = this.title;
 	}
 
 	refreshAlter() {
@@ -334,10 +344,31 @@ class Deck {
 			this.refreshAlter();
 			this.alter.classList.remove('hidden');
 			console.log(this.alter);
+		} else if (event.target.classList.contains('editDeckName')) {
+			this.editDeckName();
 		}
 
 		this.refreshEdit();
 		storedDecks.storeDeck(this.title, this.dumpDeck());
+	}
+
+	editDeckName(event) {
+		if (this.dn.classList.contains('hidden')) {
+			let oldTitle = this.title;
+			this.dn.classList.remove('hidden');
+			this.idn.classList.add('hidden');
+			this.title = this.idn.value;
+			this.refreshEdit();
+			this.refreshViewStats();
+			this.refreshAlter();
+			this.refreshIcon();
+			storedDecks.deleteDeck(oldTitle);
+		} else {
+			this.dn.classList.add('hidden');
+			this.idn.classList.remove('hidden');
+			this.idn.focus();
+			this.idn.selectionStart = this.idn.selectionEnd = this.idn.value.length;
+		}
 	}
 
 	onClickAlter(event) {
@@ -452,6 +483,8 @@ class Deck {
 	}
 
 	refreshEdit() {
+		this.dn.innerText = this.title;
+		this.idn.value = this.dn.innerText;
 		for (let i = 0; i <= 4; i++) {
 			for (let j = 0; j <= 2; j++) {
 				this.editShuffleButtons[i][j].classList.remove('toggleShowSelected');
@@ -583,11 +616,6 @@ class Deck {
 			this.setTestButtons('score');
 			return 1;
 		}
-
-		console.log(notFound);
-		console.table(include);
-		console.log(include[3]);
-		console.table(score);
 
 		this.testFront.innerHTML = this.currentCard.front;
 		this.testBack.innerHTML = this.currentCard.back;
