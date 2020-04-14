@@ -1,18 +1,3 @@
-let testDeck = [
-	{
-		front: 'Alabama',
-		back: 'Montgomery',
-		tags: ['State Capitals'],
-		score: 1,
-	},
-	{
-		front: 'Alaska',
-		back: 'Juneau',
-		tags: ['State Capitals'],
-		score: 1,
-	},
-];
-
 class DeckDisplay {
 	constructor(book) {
 		this.element = document.querySelector('.deckDisplay');
@@ -44,9 +29,7 @@ class DeckBar {
 
 	activateCreateNew() {
 		this.newButton = document.querySelector('.newDeck');
-		console.log(this.newButton);
 		this.newButton.addEventListener('click', () => {
-			console.log(book);
 			book.addDeck(templateDeck);
 		});
 	}
@@ -59,7 +42,6 @@ class DeckBar {
 		let files = ulButtonEvent.target.files;
 
 		for (let i = 0; i < files.length; i++) {
-			console.log(files[i]);
 			readFile(files[i]);
 		}
 
@@ -72,7 +54,6 @@ class DeckBar {
 
 			reader.onload = function () {
 				let output = JSON.parse(reader.result);
-				console.log(book);
 				book.addDeck(output);
 			};
 
@@ -85,7 +66,6 @@ class DeckBar {
 
 class Deck {
 	constructor(id, newDeck) {
-		console.log(newDeck);
 		this.title = newDeck.detail.title;
 		this.shuffle = newDeck.detail.shuffle;
 		this.showQuestion = newDeck.detail.showQuestion;
@@ -133,7 +113,6 @@ class Deck {
 
 		this.dn.innerText = this.title;
 		this.idn.value = this.title;
-		console.log(this.idn.value);
 		this.editShuffleButtons = [];
 		for (let i = 1; i <= 5; i++) {
 			this.editShuffleButtons.push([]);
@@ -243,11 +222,15 @@ class Deck {
 
 	onClickIcon(event) {
 		if (event.target.classList.contains('download')) {
-			console.log('download');
 			this.downloadFile();
 		} else {
+			[...deckBar.element.querySelectorAll('.deckIcon')].forEach((icon) => {
+				console.log(icon);
+				icon.classList.remove('toggleShowSelected');
+			});
 			const el = event.target;
-			console.log(event.target);
+			el.classList.add('toggleShowSelected');
+			// console.log(el);
 			deckDisplay.hideAll();
 			this.refreshViewStats();
 			this.view.classList.remove('hidden');
@@ -288,17 +271,10 @@ class Deck {
 		} else if (el.classList.contains('testRevealButton')) {
 			this.revealCurrentCard(parseInt(el.innerText, 10));
 		} else if (el.classList.contains('editTestCard')) {
-			console.log(event.target);
-			console.log(this.cards.indexOf(this.currentCard));
-			console.log(this.currentCard);
-
-			// this.deleteDeck();
-			// return 'deleted';
 			this.alterCard(this.cards.indexOf(this.currentCard));
 			deckDisplay.hideAll();
 			this.refreshAlter();
 			this.alter.classList.remove('hidden');
-			console.log(this.alter);
 		}
 	}
 
@@ -339,7 +315,6 @@ class Deck {
 			deckDisplay.hideAll();
 			this.refreshAlter();
 			this.alter.classList.remove('hidden');
-			console.log(this.alter);
 		} else if (event.target.classList.contains('editDeckName')) {
 			this.editDeckName();
 		}
@@ -368,11 +343,9 @@ class Deck {
 	}
 
 	onClickAlter(event) {
-		// console.log(event.target.classList.contains('scrollCard'));
 		if (event.target.classList.contains('scrollCard')) {
 			this.alterCard(event.target.dataset.deckid);
 		} else if (event.target.classList.contains('alterScoreButton')) {
-			console.log(this.alterCardDetail);
 			if (parseInt(this.alterCardDetail.dataset.currentcard, 10) != -1) {
 				this.saveCard(
 					parseInt(this.alterCardDetail.dataset.currentcard, 10),
@@ -381,7 +354,6 @@ class Deck {
 					parseInt(event.target.innerText, 10)
 				);
 				this.refreshAlter();
-				console.table(this.cards);
 			} else {
 				this.addCard(
 					this.alterFront.value,
@@ -399,7 +371,6 @@ class Deck {
 			this.refreshAlter();
 			this.startNewCard();
 		}
-		console.log(event.target);
 	}
 
 	deleteCard(cardId) {
@@ -412,6 +383,7 @@ class Deck {
 		this.alterCardDetail.dataset.currentcard = -1;
 		this.alterFront.value = '';
 		this.alterBack.value = '';
+		this.alterFront.focus();
 	}
 
 	saveCard(cardId, front, back, score) {
@@ -437,14 +409,22 @@ class Deck {
 	}
 
 	onKeyup(event) {
-		if (!this.test.classList.contains('hidden')) {
-			let keyPressed = event.code;
-			let numPressed = keyPressed.charAt(keyPressed.length - 1);
+		let keyPressed = event.code;
+		let numPressed = keyPressed.charAt(keyPressed.length - 1);
 
+		if (!this.test.classList.contains('hidden')) {
 			if (this.getTestButtons() == 'reveal') {
 				this.revealCurrentCard();
 			} else if (['1', '2', '3', '4', '5'].includes(numPressed)) {
 				this.scoreCurrentCard(parseInt(numPressed, 10));
+			}
+		} else if (!this.alter.classList.contains('hidden')) {
+			let scoreButtons = [...this.alter.querySelectorAll('.alterScoreButton')];
+			if (
+				(keyPressed == 'NumpadEnter' || keyPressed == 'Enter') &&
+				scoreButtons.includes(document.activeElement)
+			) {
+				event.target.click();
 			}
 		}
 	}
@@ -586,7 +566,6 @@ class Deck {
 				if (this.cardsWithScore(i).length != 0) {
 					runningSum += score[i - 1];
 				}
-				console.log(i + ': ' + this.cardsWithScore(i).length);
 				if (
 					this.cardsWithScore(i).length > 0 &&
 					this.shuffle[i - 1] > 0 &&
@@ -598,9 +577,6 @@ class Deck {
 					notFound = false;
 				}
 			}
-
-			console.log(randomDraw);
-			console.log(drawScore);
 		}
 
 		if (notFound) {
@@ -639,7 +615,6 @@ class Deck {
 		}
 
 		storedDecks.storeDeck(this.title, this.dumpDeck());
-		// console.log(this.dumpDeck());
 
 		// do another
 		this.showNextCard();
@@ -698,7 +673,6 @@ class Storage {
 		this.directory = [];
 
 		if (localStorage.getItem('directory') === null) {
-			// console.log(initialDeck);
 			this.storeDeck(initialDeck.detail.title, initialDeck);
 		} else {
 			this.directory = this.getDeck('directory');
@@ -738,16 +712,12 @@ class Storage {
 	}
 
 	deleteDeck(key) {
-		console.log(this);
 		for (let i = 0; i < this.directory.length; i++) {
 			if (key === this.directory[i]) {
 				this.directory.splice(i, 1);
-				console.log('removing');
 				i = this.directory.length + 1;
 			}
 		}
-
-		console.log(this.directory);
 
 		if (localStorage) {
 			localStorage.setItem('directory', JSON.stringify(this.directory));
@@ -755,7 +725,6 @@ class Storage {
 			$.cookies.set('directory', JSON.stringify(this.directory));
 		}
 
-		console.log(key);
 		if (localStorage) {
 			localStorage.removeItem(key);
 		} else {
@@ -775,7 +744,6 @@ class Book {
 	}
 
 	addDeck(newDeck) {
-		console.log(this);
 		this.counter += 1;
 		let tempDeck = new Deck(this.counter, newDeck);
 		this.decks.push(tempDeck);
@@ -800,11 +768,7 @@ let templateDeck = {
 
 const deckBar = new DeckBar();
 const deckDisplay = new DeckDisplay();
-
-// localStorage.clear();
-
 const storedDecks = new Storage(uscapitals); // pass default deck in case that this is a new run or cleared mem
-console.log(storedDecks);
 const book = new Book(storedDecks);
 
 deckBar.activateCreateNew();

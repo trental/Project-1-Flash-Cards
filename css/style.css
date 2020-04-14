@@ -1,6 +1,4 @@
 body {
-	background: hsla(146, 62%, 95%, 1);
-	font-family: 'Lucida Console', Monaco, monospace;
 	font-size: 1.5rem;
 	text-align: center;
 	margin: 0;
@@ -10,6 +8,62 @@ body {
 	box-sizing: border-box;
 	display: grid;
 	grid-template-rows: 100px 400px 1fr;
+}
+
+header {
+	background: #11697f;
+}
+
+.deckBar {
+	background: #f28f3b;
+}
+
+.deckDisplay {
+	background-image: url('../images/flashCards.jpeg');
+	background-position: center;
+	background: white;
+}
+
+.button {
+	background: #c8553d;
+	color: #c5c5c5;
+	display: block;
+	margin: 3px;
+	border: 2px solid #c5c5c5;
+	border-radius: 5px;
+}
+
+.button:hover {
+	border: 2px solid white;
+	color: white;
+	cursor: pointer;
+}
+
+.toggleDeckShow {
+	width: 150px;
+	display: inline-block;
+}
+
+.testResponseButton {
+	width: 50px;
+	display: inline-block;
+}
+
+h1 {
+	display: inline-block;
+	font-size: 60px;
+	color: #c5c5c5;
+	text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
+	margin: auto;
+	padding: 10px;
+}
+h3 {
+	display: inline-block;
+	font-size: 40px;
+	color: #c5c5c5;
+	text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
+	margin: auto;
+	padding: 10px;
 }
 
 #modal {
@@ -33,41 +87,6 @@ body {
 }
 
 .deckIcon {
-	background: green;
-	display: block;
-	margin: 2px;
-	border: 2px solid lightgrey;
-}
-
-.learnButton {
-	background: green;
-	display: block;
-	width: 400px;
-	margin: 1px auto;
-	border: 2px solid lightgrey;
-}
-.editButton {
-	background: tan;
-	display: block;
-	width: 400px;
-	margin: 1px auto;
-	border: 2px solid lightgrey;
-}
-.resetButton {
-	background: red;
-	display: block;
-	width: 400px;
-	margin: 1px auto;
-	border: 2px solid lightgrey;
-}
-
-.deleteButton {
-	background: black;
-	color: red;
-	display: block;
-	width: 400px;
-	margin: 1px auto;
-	border: 2px solid red;
 }
 
 .inputDeckName {
@@ -78,40 +97,29 @@ body {
 	align-items: center;
 }
 
-.alterButton {
-	background: orange;
-	display: block;
-	width: 400px;
-	margin: 1px auto;
-	border: 2px solid lightgrey;
-}
-body * {
-	background: lightgrey;
-	border: 1px solid lightslategrey;
-}
-
 .deckView {
-	background: yellow;
+	background: #f28f3b;
 	margin: 5px auto;
 	width: 450px;
 	height: 70%;
 }
 
 .deckTest {
-	background: red;
+	background: #f28f3b;
 	margin: 10px auto;
 	width: 450px;
 	height: 90%;
 }
 
 .deckEdit {
-	background: blue;
+	background: #f28f3b;
 	margin: 10px auto;
 	width: 450px;
 	height: 600px;
 }
+
 .deckAlter {
-	background: black;
+	background: #f28f3b;
 	margin: 10px auto;
 	width: 920px;
 	height: 600px;
@@ -196,104 +204,29 @@ body * {
 }
 
 .newDeck {
-	display: flex;
-	color: white;
-	align-items: center;
-	background: blue;
-	display: block;
-	margin: 2px;
-	border: 2px solid lightgrey;
+}
+
+.divideBar {
+	width: 90%;
+	height: 2px;
+	border: 1px solid #11697f;
+	background: #11697f;
+	margin: auto;
 }
 
 .minimize {
 	grid-template-rows: 100px 28px 1fr;
 }
 
-.testResponseButton {
-	width: 50px;
-	margin: 5px;
-	color: white;
-	background: blue;
-	display: inline-block;
-}
-
-.alterScoreButton {
-	width: 50px;
-	margin: 5px;
-	color: white;
-	background: blue;
-	display: inline-block;
-}
-
-.testRevealButton {
-	width: 250px;
-	margin: 5px;
-	color: white;
-	background: blue;
-	display: inline-block;
-}
-
-.newButton {
-	width: 250px;
-	margin: 5px;
-	color: white;
-	background: orange;
-	display: inline-block;
-}
-
-.toggleDeckShow {
-	width: 100px;
-	margin: 5px;
-	background: green;
-	display: inline-block;
-	border: 2px solid lightgrey;
-}
-
-.shuffleScore {
-	display: inline-block;
-}
-
-.dropButton {
-	background-color: #3498db;
-	color: white;
-	padding: 16px;
-	font-size: 16px;
-	border: none;
-	cursor: pointer;
-}
-
-.dropdButton-content {
-	display: none;
-	position: absolute;
-	background-color: #f1f1f1;
-	min-width: 160px;
-	overflow: auto;
-	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-	z-index: 1;
-}
-
-.show {
-	display: block;
-}
-
-.dropButton-content a {
-	color: black;
-	padding: 12px 16px;
-	text-decoration: none;
-	display: block;
-}
-
 .toggleShuffle {
 	width: 75px;
 	margin: 5px;
-	background: green;
 	display: inline-block;
 	border: 2px solid lightgrey;
 }
 
 .toggleShowSelected {
-	border: 2px solid blue;
-	background: lightblue;
+	background: #11697f;
 }
 
 .hidden {

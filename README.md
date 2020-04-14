@@ -27,14 +27,16 @@ Each card has a front, back and score.
 **Deck Entry / Edit**
 
 - Add New Deck
+- Delete Deck
 - Add New Cards
-- Modify Existing Cards
+- Delete Cards
+- Modify Existing Front / Back / Score of Cards
 
 **Card Presentation and Scoring**
 
 - Card scoring tiers from 1 (unknown) to 5 (immediate recall)
 - Adaptive presentation based on score, customizable by Deck
-- Show card front and recall Back, or reverse
+- Show card front / recall Back, or reverse to show card back / recall front
 
 ## Technologies Used
 
@@ -42,7 +44,7 @@ Tools used in this project so far are those covered in the first three weeks of 
 
 - HTML5
 - CSS
-- Javascript (front-end only)
+- Javascript
 
 ## Installation
 
